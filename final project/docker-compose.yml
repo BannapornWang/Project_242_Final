@@ -1,0 +1,86 @@
+# =============================================================================
+# docker-compose.yml
+# Trading Card Game Shop — Cassandra + Node.js Stack
+# Categories: Yugioh, Vanguard, My Little Pony (MLP), Gundam
+# =============================================================================
+#
+# HOW TO START:
+#   docker-compose up -d
+#
+# EXPECTED OUTPUT:
+#   Creating network "final-project_tcg-network" with driver "bridge"
+#   Creating volume "final-project_cassandra-data" with default driver
+#   Creating cassandra-node ... done
+#   Creating tcg-app        ... done
+#
+# =============================================================================
+
+version: "3.8"
+
+networks:
+  tcg-network:
+    driver: bridge
+
+volumes:
+  cassandra-data:
+    driver: local
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Apache Cassandra 4.x — Single Node (Development)
+  # ---------------------------------------------------------------------------
+  cassandra:
+    image: cassandra:4.1
+    container_name: cassandra-node
+    restart: unless-stopped
+    networks:
+      - tcg-network
+    ports:
+      - "9042:9042"        # CQL native transport port
+    environment:
+      CASSANDRA_CLUSTER_NAME: "TCGCluster"
+      CASSANDRA_DC: "datacenter1"
+      CASSANDRA_RACK: "rack1"
+      CASSANDRA_ENDPOINT_SNITCH: "SimpleSnitch"
+      HEAP_NEWSIZE: "128M"
+      MAX_HEAP_SIZE: "512M"       # Limit memory for dev machines
+    volumes:
+      - cassandra-data:/var/lib/cassandra          # Persist data across restarts
+      - ./cassandra-init.sh:/cassandra-init.sh:ro  # Init script (read-only mount)
+    healthcheck:
+      # nodetool status exits 0 only when Cassandra is fully up (UN = Up/Normal)
+      test: ["CMD-SHELL", "nodetool status | grep -E '^UN'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s   # Give Cassandra 60s to start before first check
+
+  # ---------------------------------------------------------------------------
+  # Node.js 18 Application Container
+  # ---------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production       # Multi-stage: uses the "production" stage
+    container_name: tcg-app
+    restart: unless-stopped
+    networks:
+      - tcg-network
+    ports:
+      - "3000:3000"            # Expose app on host port 3000
+    environment:
+      NODE_ENV: production
+      # Cassandra connection settings — references service name as hostname
+      CASSANDRA_HOST: cassandra
+      CASSANDRA_PORT: 9042
+      CASSANDRA_KEYSPACE: trading_card_shop
+      CASSANDRA_DC: datacenter1
+      # App settings
+      PORT: 3000
+    depends_on:
+      cassandra:
+        condition: service_healthy   # Wait until Cassandra health check passes
+    volumes:
+      - ./src:/app/src:ro            # Mount source for hot-reload in dev override

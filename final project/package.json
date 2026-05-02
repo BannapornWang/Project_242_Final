@@ -1,0 +1,23 @@
+{
+  "name": "tcg-shop-api",
+  "version": "1.0.0",
+  "description": "Trading Card Game Shop API — Yugioh, Vanguard, MLP, Gundam",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "seed": "node src/seed/seedData.js"
+  },
+  "dependencies": {
+    "cassandra-driver": "^4.7.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
