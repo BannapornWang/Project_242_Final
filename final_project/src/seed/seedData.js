@@ -97,26 +97,68 @@ async function seed() {
       image_url: '/images/MLP/TwilightSparkle_SD.jpg'
     },
     {
-      category: 'gundam', subcategory: 'mobile_suit',
-      name: 'RX-78-2 Gundam Mobile Suit Card', description: 'The original Gundam. Power 6000. Special ability: Beam Rifle deals 3 damage to target unit.',
-      price: 1100.00, stock_quantity: 14, rarity: 'Super Rare', set_name: 'Gundam Card Game: Universal Century Vol.1', card_number: 'UC01-001',
-      image_url: '/images/cards/gundam_rx78.png'
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Generation Pulse Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST10].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST10',
+      image_url: '/images/GUNDUM/Generation Pulse [ST10].png'
     },
     {
-      category: 'gundam', subcategory: 'pilot_card',
-      name: 'Amuro Ray — Newtype Pilot', description: 'Pilot card. When paired with RX-78-2: +2000 power, add Newtype Sensing reaction ability.',
-      price: 890.00, stock_quantity: 9, rarity: 'Rare', set_name: 'Gundam Card Game: Universal Century Vol.1', card_number: 'UC01-025',
-      image_url: 'https://cdn.tcgshop.th/gundam/uc01-025-amuro.jpg'
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Destiny Ignition Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST09].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST09',
+      image_url: '/images/GUNDUM/Destiny Ignition [ST09].png'
     },
     {
-      category: 'gundam', subcategory: 'unit_card',
-      name: 'Zaku II (Mass Production Type)', description: 'Zeon unit card. Power 3000. Field ability: deploy two Zaku tokens when this unit attacks.',
-      price: 390.00, stock_quantity: 22, rarity: 'Common', set_name: 'Gundam Card Game: Zeon Rising', card_number: 'ZR01-018',
-      image_url: 'https://cdn.tcgshop.th/gundam/zr01-018-zakuii.jpg'
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Flash of Radiance Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST08].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST08',
+      image_url: '/images/GUNDUM/Flash of Radiance [ST08].png'
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Celestial Drive Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST07].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST07',
+      image_url: '/images/GUNDUM/Celestial Drive [ST07].png'
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Clan Unity Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST06].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST06',
+      image_url: '/images/GUNDUM/Clan Unity [ST06].png'
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Iron Bloom Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST05].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST05',
+      image_url: '/images/GUNDUM/Iron Bloom [ST05].png'
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'SEED Strike Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST04].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST04',
+      image_url: '/images/GUNDUM/SEED Strike [ST04].png'
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: "Zeon's Rush Starter Deck", description: 'Ready-to-play Gundam Card Game Starter Deck [ST03].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST03',
+      image_url: "/images/GUNDUM/Zeon's Rush [ST03].png"
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Wings of Advance Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST02].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST02',
+      image_url: '/images/GUNDUM/Wings of Advance [ST02].png'
+    },
+    {
+      category: 'gundam', subcategory: 'starter_deck',
+      name: 'Heroic Beginnings Starter Deck', description: 'Ready-to-play Gundam Card Game Starter Deck [ST01].',
+      price: 550.00, stock_quantity: 10, rarity: 'Common', set_name: 'Gundam Starter Decks', card_number: 'ST01',
+      image_url: '/images/GUNDUM/Heroic Beginnings [ST01].png'
     }
   ];
 
-  console.log(`Seeding ${sampleProducts.length} real products from seed_data.cql...`);
+  console.log(`Seeding ${sampleProducts.length} real products...`);
   
   for (const prod of sampleProducts) {
     const id = await Product.create(prod);

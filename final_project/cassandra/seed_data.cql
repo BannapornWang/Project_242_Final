@@ -20,7 +20,6 @@ USE trading_card_shop;
 BEGIN BATCH
     INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
     VALUES ('mlp', 'starter_deck', uuid(), 'Applejack Starter Deck', 'Ready-to-play 59-card deck featuring Applejack. Great for beginners!', 450.00, 15, 'Common', 'Premiere! Starter Decks', 'SD-AJ', '/images/MLP/Applejack_SD.jpg', true, toTimestamp(now()), toTimestamp(now()));
-    -- (Application layer handles the exact UUID matching for products_by_id. Shown as concept.)
 APPLY BATCH;
 
 -- [1.2] Fluttershy Starter Deck
@@ -54,7 +53,71 @@ BEGIN BATCH
 APPLY BATCH;
 
 -- =============================================================================
--- 2. Yu-Gi-Oh! (Featured Cards)
+-- 2. Gundam Card Game (10 Starter Decks ST01-ST10)
+-- =============================================================================
+
+-- [2.1] Generation Pulse Starter Deck [ST10]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Generation Pulse Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST10].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST10', '/images/GUNDUM/Generation Pulse [ST10].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.2] Destiny Ignition Starter Deck [ST09]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Destiny Ignition Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST09].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST09', '/images/GUNDUM/Destiny Ignition [ST09].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.3] Flash of Radiance Starter Deck [ST08]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Flash of Radiance Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST08].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST08', '/images/GUNDUM/Flash of Radiance [ST08].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.4] Celestial Drive Starter Deck [ST07]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Celestial Drive Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST07].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST07', '/images/GUNDUM/Celestial Drive [ST07].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.5] Clan Unity Starter Deck [ST06]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Clan Unity Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST06].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST06', '/images/GUNDUM/Clan Unity [ST06].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.6] Iron Bloom Starter Deck [ST05]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Iron Bloom Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST05].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST05', '/images/GUNDUM/Iron Bloom [ST05].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.7] SEED Strike Starter Deck [ST04]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'SEED Strike Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST04].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST04', '/images/GUNDUM/SEED Strike [ST04].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.8] Zeon's Rush Starter Deck [ST03]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Zeon''s Rush Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST03].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST03', '/images/GUNDUM/Zeon''s Rush [ST03].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.9] Wings of Advance Starter Deck [ST02]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Wings of Advance Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST02].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST02', '/images/GUNDUM/Wings of Advance [ST02].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- [2.10] Heroic Beginnings Starter Deck [ST01]
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('gundam', 'starter_deck', uuid(), 'Heroic Beginnings Starter Deck', 'Ready-to-play Gundam Card Game Starter Deck [ST01].', 550.00, 10, 'Common', 'Gundam Starter Decks', 'ST01', '/images/GUNDUM/Heroic Beginnings [ST01].png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- =============================================================================
+-- 3. Yu-Gi-Oh! (Featured Cards)
 -- =============================================================================
 BEGIN BATCH
     INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
@@ -62,19 +125,11 @@ BEGIN BATCH
 APPLY BATCH;
 
 -- =============================================================================
--- 3. Cardfight!! Vanguard (Featured Cards)
+-- 4. Cardfight!! Vanguard (Featured Cards)
 -- =============================================================================
 BEGIN BATCH
     INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
     VALUES ('vanguard', 'grade_3_unit', uuid(), 'Blaster Blade', 'Grade 3 Royal Paladin. Power 10000. On Ride: retire one of opponent''s rear-guards.', 750.00, 10, 'Rare', 'Cardfight!! Vanguard V Vol.01', 'V-BT01/006EN', '/images/cards/blaster_blade.png', true, toTimestamp(now()), toTimestamp(now()));
-APPLY BATCH;
-
--- =============================================================================
--- 4. Gundam Card Game (Featured Cards)
--- =============================================================================
-BEGIN BATCH
-    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
-    VALUES ('gundam', 'mobile_suit', uuid(), 'RX-78-2 Gundam Mobile Suit Card', 'The original Gundam. Power 6000.', 1100.00, 14, 'Super Rare', 'Gundam Card Game: Universal Century Vol.1', 'UC01-001', '/images/cards/gundam_rx78.png', true, toTimestamp(now()), toTimestamp(now()));
 APPLY BATCH;
 
 -- =============================================================================

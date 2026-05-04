@@ -98,7 +98,16 @@
             try {
                 const res = await fetch(`/api/products?category=${game}`);
                 if (!res.ok) throw new Error('Failed to fetch');
-                const products = await res.json();
+                let products = await res.json();
+                
+                // Sort Gundam by ST number descending
+                if (game === 'gundam') {
+                    products.sort((a, b) => {
+                        const numA = parseInt(a.card_number?.replace('ST', '') || 0);
+                        const numB = parseInt(b.card_number?.replace('ST', '') || 0);
+                        return numB - numA;
+                    });
+                }
                 
                 const container = document.getElementById('products-container');
                 container.innerHTML = '';
