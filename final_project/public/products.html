@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DooCard TCG | สินค้า</title>
+    <meta name="description" content="ร้านขายการ์ดเกมสะสม Yu-Gi-Oh!, Vanguard, Buddyfight, และ Pokemon TCG">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Add padding to account for fixed navbar */
+        body { padding-top: calc(var(--nav-height) + 2rem); }
+        .navbar { background: rgba(10, 12, 16, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-accent">Doo</span>Card
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">หน้าหลัก</a></li>
+                <li><a href="products.html" class="active">หน้าสินค้า</a></li>
+            </ul>
+            <div class="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories-section">
+        <div class="section-header">
+            <h2>หมวดหมู่เกมการ์ด</h2>
+            <p>เลือกซีรีส์การ์ดเกมที่คุณชื่นชอบ</p>
+        </div>
+
+        <div class="category-grid">
+            <a href="category.html?game=yugioh" class="category-card" data-game="yugioh">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🎴</div>
+                    <h3>Yu-Gi-Oh!</h3>
+                    <p>It's Time to Duel!</p>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+
+            <a href="category.html?game=vanguard" class="category-card" data-game="vanguard">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">⚔️</div>
+                    <h3>Cardfight!! Vanguard</h3>
+                    <p>Stand up, Vanguard!</p>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+
+            <a href="category.html?game=mlp" class="category-card" data-game="mlp">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🦄</div>
+                    <h3>My Little Pony</h3>
+                    <p>Friendship is Magic!</p>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+
+            <a href="category.html?game=gundam" class="category-card" data-game="gundam">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🤖</div>
+                    <h3>Gundam Card Game</h3>
+                    <p>Mobile Suits Standby!</p>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo">
+                <span class="logo-accent">Doo</span>Card
+            </div>
+            <p>&copy; 2026 DooCard Trading Card Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Simple script for mobile menu (placeholder logic)
+        const mobileBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileBtn.addEventListener('click', () => {
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '100%';
+                navLinks.style.left = '0';
+                navLinks.style.width = '100%';
+                navLinks.style.background = 'rgba(10, 12, 16, 0.95)';
+                navLinks.style.padding = '2rem';
+            }
+        });
+    </script>
+</body>
+</html>

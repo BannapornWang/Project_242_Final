@@ -45,7 +45,7 @@ class Product {
       query = 'SELECT * FROM products WHERE category = ? AND subcategory = ?';
       params = [category, subcategory];
     } else {
-      query = 'SELECT * FROM products WHERE category = ?';
+      query = 'SELECT * FROM products WHERE category = ? ALLOW FILTERING';
       params = [category];
     }
     console.log(`\n[CQL EXECUTE] GET BY CATEGORY`);

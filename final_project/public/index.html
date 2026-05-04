@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DooCard TCG | Trading Card Shop</title>
+    <meta name="description" content="ร้านขายการ์ดเกมสะสม Yu-Gi-Oh!, Vanguard, Buddyfight, และ Pokemon TCG">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-accent">Doo</span>Card
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">หน้าหลัก</a></li>
+                <li><a href="products.html">หน้าสินค้า</a></li>
+            </ul>
+            <div class="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>ปลดล็อกพลังแห่ง<span>การ์ดของคุณ</span></h1>
+            <p>ศูนย์รวมการ์ดเกมลิขสิทธิ์แท้ที่คุณตามหา ไม่ว่าจะเป็น Yu-Gi-Oh!, Vanguard, Buddyfight หรือ Pokemon TCG ช้อปง่าย จัดส่งไว</p>
+            <a href="products.html" class="cta-btn">เลือกซื้อสินค้าเลย</a>
+        </div>
+        <div class="hero-glow"></div>
+    </header>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo">
+                <span class="logo-accent">Doo</span>Card
+            </div>
+            <p>&copy; 2026 DooCard Trading Card Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Simple script for sticky navbar and mobile menu (placeholder logic)
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

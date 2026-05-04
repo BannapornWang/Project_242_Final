@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const client = require('./config/cassandra');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -8,6 +9,9 @@ const ordersRouter = require('./routes/orders');
 
 const app = express();
 app.use(express.json());
+
+// Serve static frontend files from 'public' directory
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Routes
 app.use('/api/products', productsRouter);

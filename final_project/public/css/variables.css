@@ -1,0 +1,32 @@
+/* =========================================
+   Design System & Tokens
+   ========================================= */
+:root {
+    /* Colors */
+    --bg-dark: #0a0c10;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    
+    /* Accents */
+    --accent-primary: #f97316;
+    --accent-glow: rgba(249, 115, 22, 0.5);
+    
+    /* Game Specific Colors */
+    --color-yugioh: #fbbf24;
+    --color-vanguard: #ef4444;
+    --color-buddyfight: #8b5cf6;
+    --color-pokemon: #eab308;
+
+    /* Typography */
+    --font-heading: 'Kanit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Spacing & Utilities */
+    --nav-height: 80px;
+    --border-radius-lg: 24px;
+    --border-radius-md: 16px;
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}

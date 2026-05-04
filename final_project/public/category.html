@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DooCard TCG | สินค้าตามหมวดหมู่</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { padding-top: calc(var(--nav-height) + 2rem); }
+        .navbar { background: rgba(10, 12, 16, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); }
+        
+        .products-section { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            background: var(--bg-card-hover);
+            border-color: var(--accent-primary);
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1);
+        }
+        .product-image-placeholder {
+            width: 100%; height: 200px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; opacity: 0.8;
+            border: 1px dashed rgba(255,255,255,0.1);
+        }
+        .product-title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;}
+        .product-desc { font-size: 0.9rem; color: var(--text-secondary); flex-grow: 1; }
+        .product-price { font-size: 1.5rem; font-weight: 700; color: var(--accent-primary); margin-top: auto;}
+        .product-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        
+        .loading { text-align: center; padding: 4rem; color: var(--text-secondary); font-size: 1.2rem; grid-column: 1 / -1;}
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><span class="logo-accent">Doo</span>Card</div>
+            <ul class="nav-links">
+                <li><a href="index.html">หน้าหลัก</a></li>
+                <li><a href="products.html" class="active">หน้าสินค้า</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="section-header">
+            <h2 id="category-title">กำลังโหลด...</h2>
+            <p id="category-subtitle">กรุณารอสักครู่</p>
+        </div>
+
+        <div id="products-container" class="products-grid">
+            <div class="loading">กำลังดึงข้อมูลสินค้า...</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo"><span class="logo-accent">Doo</span>Card</div>
+            <p>&copy; 2026 DooCard Trading Card Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const game = urlParams.get('game');
+        
+        const titles = {
+            'yugioh': { title: 'Yu-Gi-Oh!', icon: '🎴' },
+            'vanguard': { title: 'Cardfight!! Vanguard', icon: '⚔️' },
+            'mlp': { title: 'My Little Pony CCG', icon: '🦄' },
+            'gundam': { title: 'Gundam Card Game', icon: '🤖' }
+        };
+
+        const categoryInfo = titles[game] || { title: 'สินค้าทั้งหมด', icon: '📦' };
+        document.getElementById('category-title').innerText = categoryInfo.icon + ' ' + categoryInfo.title;
+        document.getElementById('category-subtitle').innerText = 'เลือกซื้อการ์ดที่คุณตามหาได้เลย';
+
+        async function fetchProducts() {
+            try {
+                const res = await fetch(`/api/products?category=${game}`);
+                if (!res.ok) throw new Error('Failed to fetch');
+                const products = await res.json();
+                
+                const container = document.getElementById('products-container');
+                container.innerHTML = '';
+                
+                if (products.length === 0) {
+                    container.innerHTML = '<div class="loading">ไม่มีสินค้าในหมวดหมู่นี้</div>';
+                    return;
+                }
+                
+                products.forEach(p => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    const imageHtml = p.image_url ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='${categoryInfo.icon}'">` : categoryInfo.icon;
+                    card.innerHTML = `
+                        <div class="product-image-placeholder" style="${p.image_url ? 'padding:0; border:none; background:transparent;' : ''}">${imageHtml}</div>
+                        <div>
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-desc">${p.description}</div>
+                        </div>
+                        <div class="product-meta">
+                            <span>💎 Rarity: ${p.rarity || '-'}</span>
+                            <span>📦 Stock: ${p.stock_quantity || p.stock || 0}</span>
+                        </div>
+                        <div class="product-price">฿${parseFloat(p.price).toFixed(2)}</div>
+                        <button class="cta-btn" style="padding: 0.75rem; font-size: 1rem; width: 100%; border:none; cursor:pointer;">หยิบใส่ตะกร้า</button>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('products-container').innerHTML = '<div class="loading">เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาลองใหม่อีกครั้ง</div>';
+            }
+        }
+        
+        if (game) {
+            fetchProducts();
+        } else {
+            document.getElementById('products-container').innerHTML = '<div class="loading">ไม่พบหมวดหมู่ที่ระบุ กรุณากลับไปเลือกหมวดหมู่ที่หน้าสินค้า</div>';
+            document.getElementById('category-title').innerText = 'ไม่พบหมวดหมู่';
+        }
+    </script>
+</body>
+</html>
