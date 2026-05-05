@@ -123,8 +123,14 @@ async function seed() {
   console.log(`Seeding ${sampleProducts.length} cards into database...`);
   
   for (const prod of sampleProducts) {
-    const id = await Product.create(prod);
-    console.log(`Seeded: ${prod.name} with ID: ${id}`);
+    // ตรวจสอบว่ามีสินค้าชื่อเดียวกันอยู่แล้วหรือไม่ เพื่อป้องกันข้อมูลซ้ำ
+    const existingProduct = await Product.find({ name: prod.name });
+    if (existingProduct.first()) {
+      console.log(`สินค้า "${prod.name}" มีอยู่แล้ว, ข้ามการเพิ่มข้อมูลนี้`);
+    } else {
+      const id = await Product.create(prod);
+      console.log(`เพิ่มข้อมูล: ${prod.name} with ID: ${id}`);
+    }
   }
 
   console.log('Seed completed successfully.');
