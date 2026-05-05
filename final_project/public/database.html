@@ -358,9 +358,22 @@
             // Disable category in edit mode
             document.getElementById('form-category').disabled = true;
             openModal('modal-form');
-        } catch (err) { toast('ไม่สามารถโหลดข้อมูลได้', 'error'); }
-    }
-
+        } catch (err) { toast('ไม่สามารถโหลดข้อมูลได้', 'error'); }
+    }
+
+    function handleImageFileChange() {
+        const fileInput = document.getElementById('form-image-file');
+        const previewEl = document.getElementById('image-preview');
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) {
+            const existingUrl = document.getElementById('form-image-url').value.trim();
+            previewEl.innerHTML = existingUrl ? `<img src="${existingUrl}" style="max-width:100%; max-height:150px; object-fit:contain;">` : '';
+            return;
+        }
+        const url = URL.createObjectURL(file);
+        previewEl.innerHTML = `<img src="${url}" style="max-width:100%; max-height:150px; object-fit:contain;">`;
+    }
+
     // =========== SUBMIT (Create or Update) ===========
     async function submitForm() {
         const id = document.getElementById('form-id').value;
@@ -377,8 +390,8 @@
 
         if (fileInput.files && fileInput.files[0]) {
             const formData = new FormData();
-            formData.append('image', fileInput.files[0]);
             formData.append('category', category);
+            formData.append('image', fileInput.files[0]);
             
             try {
                 const uploadRes = await fetch('/api/upload', {
@@ -411,11 +424,11 @@
         try {
             if (editMode && id) {
                 // UPDATE
-                const cql = `UPDATE products_by_id SET price=?, stock_quantity=?, description=?, ... WHERE product_id=${id} IF EXISTS`;
+                const cql = `UPDATE products_by_id SET price=?, stock_quantity=?, description=?, image_url=?, is_available=?, updated_at=toTimestamp(now()) WHERE product_id=${id} IF EXISTS`;
                 addCqlLog('UPDATE', cql);
                 const res = await fetch(`/api/products/${id}`, {
                     method: 'PUT', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ price: data.price, stock_quantity: data.stock_quantity, description: data.description, is_available: true })
+                    body: JSON.stringify({ price: data.price, stock_quantity: data.stock_quantity, description: data.description, image_url: data.image_url, is_available: true })
                 });
                 if (!res.ok) throw new Error('Update failed');
                 toast('✅ อัปเดตข้อมูลการ์ดสำเร็จ (LWT: IF EXISTS)', 'success');
@@ -433,7 +446,7 @@
             }
             closeModal('modal-form');
             document.getElementById('form-category').disabled = false;
-            loadCards(currentFilter);
+            await loadCards(currentFilter || 'all');
         } catch (err) { toast('❌ เกิดข้อผิดพลาด: ' + err.message, 'error'); }
         finally {
             btn.disabled = false;
@@ -483,6 +496,7 @@
     document.getElementById('btn-submit-form').addEventListener('click', submitForm);
     document.getElementById('btn-confirm-delete').addEventListener('click', confirmDelete);
     document.getElementById('btn-toggle-cql').addEventListener('click', toggleCqlPanel);
+    document.getElementById('form-image-file').addEventListener('change', handleImageFileChange);
     document.getElementById('search-input').addEventListener('input', e => handleSearch(e.target.value));
     document.getElementById('mobile-menu-btn').addEventListener('click', () => document.querySelector('.nav-links').classList.toggle('open'));
 

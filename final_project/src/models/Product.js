@@ -91,21 +91,22 @@ class Product {
     const price = data.price !== undefined ? data.price : existing.price;
     const stock = data.stock_quantity !== undefined ? data.stock_quantity : existing.stock_quantity;
     const desc = data.description !== undefined ? data.description : existing.description;
+    const imageUrl = data.image_url !== undefined ? data.image_url : existing.image_url;
     const avail = data.is_available !== undefined ? data.is_available : existing.is_available;
 
     const query1 = `
       UPDATE products_by_id 
-      SET price = ?, stock_quantity = ?, description = ?, is_available = ?, updated_at = toTimestamp(now())
+      SET price = ?, stock_quantity = ?, description = ?, image_url = ?, is_available = ?, updated_at = toTimestamp(now())
       WHERE product_id = ? IF EXISTS
     `;
-    const params1 = [price, stock, desc, avail, id];
+    const params1 = [price, stock, desc, imageUrl, avail, id];
 
     const query2 = `
       UPDATE products 
-      SET price = ?, stock_quantity = ?, description = ?, is_available = ?, updated_at = toTimestamp(now())
+      SET price = ?, stock_quantity = ?, description = ?, image_url = ?, is_available = ?, updated_at = toTimestamp(now())
       WHERE category = ? AND subcategory = ? AND product_id = ? IF EXISTS
     `;
-    const params2 = [price, stock, desc, avail, existing.category, existing.subcategory, id];
+    const params2 = [price, stock, desc, imageUrl, avail, existing.category, existing.subcategory, id];
 
     console.log(`\n[CQL EXECUTE] UPDATE PRODUCT (LWT)`);
     console.log(`Query 1 (products_by_id): ${query1.trim()}`);
