@@ -1,9 +1,10 @@
 const express = require('express');
 const Product = require('../models/Product');
+const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 // POST /api/products
-router.post('/', async (req, res, next) => {
+router.post('/', requireAuth, async (req, res, next) => {
   try {
     const { category, name, price, stock_quantity } = req.body;
     if (!category || !name || price === undefined || stock_quantity === undefined) {
@@ -18,8 +19,7 @@ router.post('/', async (req, res, next) => {
 router.get('/search', async (req, res, next) => {
   try {
     const { name } = req.query;
-    if (!name) return res.status(400).json({ error: 'Search name required' });
-    const results = await Product.searchByName(name);
+    const results = await Product.searchByName(name || '');
     res.json(results);
   } catch (err) { next(err); }
 });
@@ -66,7 +66,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // PUT /api/products/:id
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requireAuth, async (req, res, next) => {
   try {
     const { price, stock_quantity, description, is_available } = req.body;
     const updated = await Product.update(req.params.id, { price, stock_quantity, description, is_available });
@@ -76,7 +76,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // DELETE /api/products/:id/permanent
-router.delete('/:id/permanent', async (req, res, next) => {
+router.delete('/:id/permanent', requireAuth, async (req, res, next) => {
   try {
     const deleted = await Product.hardDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Not found' });
@@ -85,7 +85,7 @@ router.delete('/:id/permanent', async (req, res, next) => {
 });
 
 // DELETE /api/products/:id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requireAuth, async (req, res, next) => {
   try {
     const deleted = await Product.softDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Not found' });

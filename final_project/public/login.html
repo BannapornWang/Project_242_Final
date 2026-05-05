@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DooCard Wiki | เข้าสู่ระบบ</title>
+    <meta name="description" content="เข้าสู่ระบบเพื่อเพิ่ม แก้ไข และลบข้อมูลการ์ดในฐานข้อมูล">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        .auth-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: calc(var(--nav-height) + 2rem) 1.5rem 2rem; }
+        .auth-card {
+            width: 100%; max-width: 440px;
+            background: var(--bg-surface); border: var(--border-subtle);
+            border-radius: var(--border-radius-lg); padding: 2.5rem;
+            box-shadow: var(--shadow-lg); animation: fadeInUp 0.4s ease;
+        }
+        .auth-card h1 { font-size: 1.6rem; font-weight: 700; text-align: center; margin-bottom: 0.3rem; }
+        .auth-card .subtitle { text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
+        .auth-form { display: flex; flex-direction: column; gap: 1.1rem; }
+        .auth-form .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .auth-form label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+        .auth-form input {
+            padding: 0.75rem 1rem; background: var(--bg-input);
+            border: 1px solid rgba(48, 54, 61, 0.6); border-radius: var(--border-radius-xs);
+            color: var(--text-primary); font-family: var(--font-body); font-size: 0.95rem;
+            transition: var(--transition-fast); outline: none;
+        }
+        .auth-form input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.12); }
+        .auth-form .submit-btn {
+            padding: 0.8rem; background: var(--accent-primary); color: #fff;
+            border: none; border-radius: var(--border-radius-sm); font-family: var(--font-heading);
+            font-weight: 600; font-size: 1rem; cursor: pointer; transition: var(--transition-fast);
+            margin-top: 0.5rem;
+        }
+        .auth-form .submit-btn:hover { background: #4393e6; transform: translateY(-1px); }
+        .auth-form .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .auth-error { color: var(--accent-danger); font-size: 0.85rem; text-align: center; min-height: 1.2rem; }
+        .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); }
+        .auth-footer a { color: var(--accent-primary); font-weight: 600; transition: var(--transition-fast); }
+        .auth-footer a:hover { text-decoration: underline; }
+        .auth-icon { text-align: center; font-size: 3rem; margin-bottom: 1rem; }
+        .auth-glow {
+            position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
+            width: 600px; height: 400px; pointer-events: none; z-index: 0;
+            background: radial-gradient(circle, rgba(88,166,255,0.06) 0%, rgba(8,11,20,0) 70%);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar"><div class="nav-container">
+        <a href="index.html" class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</a>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าหลัก</a></li>
+            <li><a href="database.html">ฐานข้อมูลการ์ด</a></li>
+            <li><a href="login.html" class="active">เข้าสู่ระบบ</a></li>
+        </ul>
+        <div class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></div>
+    </div></nav>
+
+    <div class="auth-glow"></div>
+
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-icon">🔐</div>
+            <h1>เข้าสู่ระบบ</h1>
+            <p class="subtitle">ลงชื่อเข้าใช้เพื่อเพิ่ม แก้ไข และลบข้อมูลการ์ด</p>
+
+            <form class="auth-form" id="login-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="username">ชื่อผู้ใช้ (Username)</label>
+                    <input type="text" id="username" placeholder="เช่น duelist99" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">รหัสผ่าน (Password)</label>
+                    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+                <div class="auth-error" id="error-msg"></div>
+                <button type="submit" class="submit-btn" id="submit-btn">🚀 เข้าสู่ระบบ</button>
+            </form>
+
+            <div class="auth-footer">
+                ยังไม่มีบัญชี? <a href="register.html">สมัครสมาชิก</a>
+            </div>
+        </div>
+    </div>
+
+    <footer><div class="footer-content">
+        <div class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</div>
+        <p>&copy; 2026 DooCard Wiki</p>
+    </div></footer>
+
+    <script>
+        // Redirect if already logged in
+        fetch('/api/auth/me').then(r => r.json()).then(d => {
+            if (d.loggedIn) window.location.href = 'database.html';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async () => {
+            const btn = document.getElementById('submit-btn');
+            const errEl = document.getElementById('error-msg');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            errEl.textContent = '';
+            if (!username || !password) { errEl.textContent = 'กรุณากรอกข้อมูลให้ครบ'; return; }
+
+            btn.disabled = true; btn.textContent = '⏳ กำลังเข้าสู่ระบบ...';
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (!res.ok) { errEl.textContent = data.error || 'เข้าสู่ระบบไม่สำเร็จ'; return; }
+                window.location.href = 'database.html';
+            } catch (err) {
+                errEl.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+            } finally {
+                btn.disabled = false; btn.textContent = '🚀 เข้าสู่ระบบ';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /* =========================================
-   Navigation Bar
+   Navigation Bar — Card Database Wiki
    ========================================= */
 .navbar {
     position: fixed;
@@ -7,22 +7,18 @@
     left: 0;
     width: 100%;
     height: var(--nav-height);
-    background: transparent;
+    background: rgba(8, 11, 20, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(48, 54, 61, 0.5);
     z-index: 1000;
     transition: var(--transition-smooth);
 }
 
-.navbar.scrolled {
-    background: rgba(10, 12, 16, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
 .nav-container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1.5rem;
     height: 100%;
     display: flex;
     justify-content: space-between;
@@ -30,48 +26,75 @@
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    font-size: 1.5rem;
 }
 
 .logo-accent {
-    color: var(--accent-primary);
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    gap: 0.25rem;
+    align-items: center;
 }
 
 .nav-links a {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-secondary);
     transition: var(--transition-fast);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
     position: relative;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover {
     color: var(--text-primary);
+    background: rgba(88, 166, 255, 0.08);
 }
 
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -6px;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background: var(--accent-primary);
-    transition: var(--transition-smooth);
-    border-radius: 2px;
+.nav-links a.active {
+    color: var(--text-primary);
+    background: rgba(88, 166, 255, 0.12);
 }
 
-.nav-links a:hover::after, .nav-links a.active::after {
-    width: 100%;
+.nav-db-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0.35rem 0.75rem;
+    background: rgba(22, 27, 34, 0.6);
+    border: 1px solid rgba(48, 54, 61, 0.4);
+    border-radius: 100px;
+}
+
+.nav-db-status .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-secondary);
+    animation: pulse 2s infinite;
+}
+
+.nav-db-status.offline .status-dot {
+    background: var(--accent-danger);
 }
 
 .mobile-menu-btn {
@@ -81,20 +104,39 @@
 /* Responsive Navbar */
 @media (max-width: 768px) {
     .nav-links {
-        display: none; /* Hide for mobile initially */
+        display: none;
     }
     
     .mobile-menu-btn {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 5px;
         cursor: pointer;
+        padding: 4px;
     }
     
     .mobile-menu-btn span {
-        width: 30px;
+        width: 24px;
         height: 2px;
         background: var(--text-primary);
         transition: var(--transition-fast);
+        border-radius: 2px;
+    }
+
+    .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(8, 11, 20, 0.97);
+        padding: 1rem;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+        animation: slideDown 0.2s ease;
+    }
+
+    .nav-db-status {
+        display: none;
     }
 }

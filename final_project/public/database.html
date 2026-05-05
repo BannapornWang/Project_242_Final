@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DooCard Wiki | ฐานข้อมูลการ์ด</title>
+    <meta name="description" content="ฐานข้อมูลการ์ดเกมสะสม — ค้นหา เพิ่ม แก้ไข ลบข้อมูลการ์ดได้อิสระ">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar"><div class="nav-container">
+        <div class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</div>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าหลัก</a></li>
+            <li><a href="database.html" class="active">ฐานข้อมูลการ์ด</a></li>
+            <li id="nav-auth-link"><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
+        </ul>
+        <div class="nav-db-status" id="nav-db-status"><span class="status-dot"></span><span>Cassandra</span></div>
+        <div class="mobile-menu-btn" id="mobile-menu-btn"><span></span><span></span><span></span></div>
+    </div></nav>
+
+    <!-- Toolbar -->
+    <section class="cards-section" style="padding-top: calc(var(--nav-height) + 1.5rem);">
+        <div class="cards-toolbar">
+            <div class="toolbar-left">
+                <h2 style="font-size:1.4rem; margin-right:0.5rem;" id="page-title">📂 ฐานข้อมูลการ์ด</h2>
+                <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+                <button class="filter-btn" data-filter="yugioh">🎴 Yu-Gi-Oh!</button>
+                <button class="filter-btn" data-filter="vanguard">⚔️ Vanguard</button>
+                <button class="filter-btn" data-filter="mlp">🦄 MLP</button>
+                <button class="filter-btn" data-filter="gundam">🤖 Gundam</button>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                <div class="hero-search" style="margin:0; max-width:280px;">
+                    <input type="text" id="search-input" placeholder="🔍 ค้นหาการ์ด..." style="padding:0.55rem 0.85rem; font-size:0.85rem;">
+                </div>
+                <button class="cta-btn" id="btn-add-card" style="white-space:nowrap;">➕ เพิ่มการ์ด</button>
+                <button class="cta-btn secondary" id="btn-toggle-cql" style="white-space:nowrap;">🗄️ CQL Log</button>
+            </div>
+        </div>
+        <div id="cards-container" class="cards-grid">
+            <div class="loading-text"><span class="spinner"></span> กำลังโหลดข้อมูลจาก Cassandra...</div>
+        </div>
+    </section>
+
+    <!-- Create/Edit Modal -->
+    <div class="modal-overlay" id="modal-form">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">➕ เพิ่มการ์ดใหม่</h2>
+                <button class="modal-close" onclick="closeModal('modal-form')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="card-form" class="form-grid">
+                    <input type="hidden" id="form-id">
+                    <div class="form-group">
+                        <label>ซีรีส์ <span class="required">*</span></label>
+                        <select id="form-category" required>
+                            <option value="">-- เลือกซีรีส์ --</option>
+                            <option value="yugioh">Yu-Gi-Oh!</option>
+                            <option value="vanguard">Cardfight!! Vanguard</option>
+                            <option value="mlp">My Little Pony</option>
+                            <option value="gundam">Gundam</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ประเภทย่อย</label>
+                        <input type="text" id="form-subcategory" placeholder="เช่น monster_card, booster_pack">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>ชื่อการ์ด <span class="required">*</span></label>
+                        <input type="text" id="form-name" required placeholder="เช่น Blue-Eyes White Dragon">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>คำอธิบาย</label>
+                        <textarea id="form-description" placeholder="รายละเอียดเกี่ยวกับการ์ดใบนี้..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>ราคาอ้างอิง (฿)</label>
+                        <input type="number" id="form-price" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>จำนวนที่ทราบ</label>
+                        <input type="number" id="form-stock" min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>ระดับความหายาก</label>
+                        <select id="form-rarity">
+                            <option value="Common">Common</option>
+                            <option value="Rare">Rare</option>
+                            <option value="Super Rare">Super Rare</option>
+                            <option value="Ultra Rare">Ultra Rare</option>
+                            <option value="Secret Rare">Secret Rare</option>
+                            <option value="Mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ชุด (Set Name)</label>
+                        <input type="text" id="form-set" placeholder="เช่น Legend of Blue Eyes">
+                    </div>
+                    <div class="form-group">
+                        <label>หมายเลขการ์ด</label>
+                        <input type="text" id="form-cardnum" placeholder="เช่น LOB-EN001">
+                    </div>
+                    <div class="form-group">
+                        <label>รูปภาพการ์ด</label>
+                        <input type="file" id="form-image-file" accept="image/*" style="padding: 0.5rem; background: var(--bg-surface); border: var(--border-subtle); border-radius: var(--border-radius-xs); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                        <input type="hidden" id="form-image-url">
+                        <div id="image-preview" style="margin-top: 0.5rem; max-height: 150px; overflow: hidden; border-radius: var(--border-radius-xs);"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="cta-btn secondary" onclick="closeModal('modal-form')">ยกเลิก</button>
+                <button class="cta-btn success" id="btn-submit-form">💾 บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="modal-delete">
+        <div class="modal" style="max-width:440px;">
+            <div class="modal-header">
+                <h2>🗑️ ยืนยันการลบ</h2>
+                <button class="modal-close" onclick="closeModal('modal-delete')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-dialog">
+                    <p>คุณต้องการลบการ์ดนี้ถาวรหรือไม่?</p>
+                    <p class="card-name" id="delete-card-name"></p>
+                    <p style="color:var(--accent-danger); font-size:0.85rem; margin-top:1rem;">⚠️ การลบจะดำเนินการ Batch DELETE จาก 2 ตารางพร้อมกัน</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cta-btn secondary" onclick="closeModal('modal-delete')">ยกเลิก</button>
+                <button class="cta-btn danger" id="btn-confirm-delete">🗑️ ลบถาวร</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail View -->
+    <div class="detail-overlay" id="detail-view">
+        <div class="detail-panel">
+            <div class="detail-header">
+                <h2 id="detail-title" style="font-size:1.3rem;">กำลังโหลด...</h2>
+                <button class="modal-close" onclick="closeModal('detail-view')">&times;</button>
+            </div>
+            <div class="detail-content" id="detail-content"></div>
+            <div class="detail-actions" id="detail-actions"></div>
+            <div class="detail-cql-log">
+                <details>
+                    <summary>📋 CQL Query ที่ใช้ดึงข้อมูลนี้</summary>
+                    <div class="cql-code" id="detail-cql">SELECT * FROM products_by_id WHERE product_id = ?</div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- CQL Log Panel -->
+    <div class="cql-panel" id="cql-panel">
+        <div class="cql-panel-header">
+            <h3>🗄️ CQL Query Log (Real-time)</h3>
+            <button class="modal-close" onclick="toggleCqlPanel()" style="font-size:1rem;">&times;</button>
+        </div>
+        <div class="cql-panel-body" id="cql-log-body">
+            <div style="color:var(--text-muted); padding:1rem; text-align:center;">ยังไม่มี Query — ลองทำ CRUD เพื่อดู CQL ที่ถูกใช้งาน</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <footer><div class="footer-content">
+        <div class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</div>
+        <div class="footer-tech"><span>Powered by</span><span class="tech-badge">Node.js</span><span class="tech-badge">Express</span><span class="tech-badge">Cassandra</span></div>
+        <p>&copy; 2026 DooCard Wiki — Open Card Database</p>
+    </div></footer>
+
+    <script>
+    // =========== STATE ===========
+    let allCards = [];
+    let currentFilter = 'all';
+    let deleteTargetId = null;
+    let editMode = false;
+    let currentUser = null;
+    const cqlLogs = [];
+    const ICONS = { yugioh:'🎴', vanguard:'⚔️', mlp:'🦄', gundam:'🤖' };
+    const GAME_NAMES = { yugioh:'Yu-Gi-Oh!', vanguard:'Vanguard', mlp:'My Little Pony', gundam:'Gundam' };
+
+    // =========== HELPERS ===========
+    function toast(msg, type='info') {
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.textContent = msg;
+        document.getElementById('toast-container').appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+    }
+
+    function addCqlLog(operation, query) {
+        const now = new Date().toLocaleTimeString();
+        cqlLogs.unshift({ time: now, operation, query });
+        renderCqlLog();
+    }
+
+    function renderCqlLog() {
+        const body = document.getElementById('cql-log-body');
+        body.innerHTML = cqlLogs.slice(0, 50).map(l =>
+            `<div class="cql-log-entry"><span class="log-time">${l.time}</span><span class="log-operation">${l.operation}</span><span class="log-query">${l.query}</span></div>`
+        ).join('');
+    }
+
+    function toggleCqlPanel() {
+        document.getElementById('cql-panel').classList.toggle('active');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function rarityClass(r) {
+        if (!r) return 'common';
+        const l = r.toLowerCase();
+        if (l.includes('secret')) return 'secret-rare';
+        if (l.includes('ultra')) return 'ultra-rare';
+        if (l.includes('super')) return 'super-rare';
+        if (l.includes('rare')) return 'rare';
+        if (l.includes('mixed')) return 'mixed';
+        return 'common';
+    }
+
+    // =========== READ (Fetch All) ===========
+    async function loadCards(category) {
+        const container = document.getElementById('cards-container');
+        container.innerHTML = '<div class="loading-text"><span class="spinner"></span> กำลังดึงข้อมูลจาก Cassandra...</div>';
+        try {
+            let url, cql;
+            if (category && category !== 'all') {
+                url = `/api/products?category=${category}`;
+                cql = `SELECT * FROM products WHERE category = '${category}'`;
+            } else {
+                url = '/api/products/search?name=';
+                cql = 'SELECT * FROM products_by_id LIMIT 1000';
+            }
+            addCqlLog('SELECT', cql);
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Fetch failed');
+            allCards = await res.json();
+            renderCards(allCards);
+        } catch (err) {
+            container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>ไม่สามารถโหลดข้อมูลได้</h3><p>${err.message}</p><button class="cta-btn" onclick="loadCards('${category}')">ลองใหม่</button></div>`;
+        }
+    }
+
+    function renderCards(cards) {
+        const container = document.getElementById('cards-container');
+        if (!cards.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><h3>ไม่พบข้อมูลการ์ด</h3><p>ลองเพิ่มการ์ดใหม่เข้าฐานข้อมูล</p><button class="cta-btn" onclick="openAddModal()">➕ เพิ่มการ์ดใหม่</button></div>';
+            return;
+        }
+        container.innerHTML = cards.map(c => {
+            const icon = ICONS[c.category] || '📦';
+            const imgHtml = c.image_url
+                ? `<img src="${c.image_url}" alt="${c.name}" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='${icon}'">`
+                : icon;
+            return `<div class="db-card" onclick="viewCard('${c.product_id}')">
+                <div class="db-card-image">${imgHtml}</div>
+                <div class="db-card-body">
+                    <div class="db-card-category ${c.category}">${icon} ${(c.category||'').toUpperCase()}</div>
+                    <div class="db-card-title">${c.name}</div>
+                    <div class="db-card-desc">${c.description || 'ไม่มีคำอธิบาย'}</div>
+                    <div class="db-card-meta">
+                        <span class="rarity-badge ${rarityClass(c.rarity)}">${c.rarity || 'N/A'}</span>
+                        <span class="db-card-set">${c.set_name || ''}</span>
+                    </div>
+                </div>
+                <div class="db-card-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); openEditModal('${c.product_id}')">✏️ แก้ไข</button>
+                    <button class="delete-btn" onclick="event.stopPropagation(); openDeleteModal('${c.product_id}','${c.name.replace(/'/g,"\\'")}')">🗑️ ลบ</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // =========== READ SINGLE ===========
+    async function viewCard(id) {
+        openModal('detail-view');
+        document.getElementById('detail-title').textContent = 'กำลังโหลด...';
+        document.getElementById('detail-content').innerHTML = '<div class="loading-text"><span class="spinner"></span></div>';
+        const cql = `SELECT * FROM products_by_id WHERE product_id = ${id}`;
+        addCqlLog('SELECT', cql);
+        document.getElementById('detail-cql').textContent = cql;
+        try {
+            const res = await fetch(`/api/products/${id}`);
+            const c = await res.json();
+            if (c.error) throw new Error(c.error);
+            const icon = ICONS[c.category] || '📦';
+            document.getElementById('detail-title').textContent = c.name;
+            const imgHtml = c.image_url
+                ? `<img src="${c.image_url}" alt="${c.name}" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='${icon}'">`
+                : icon;
+            document.getElementById('detail-content').innerHTML = `
+                <div class="detail-image">${imgHtml}</div>
+                <div class="detail-info">
+                    <div><span class="rarity-badge ${rarityClass(c.rarity)}" style="font-size:0.85rem;">${c.rarity||'N/A'}</span></div>
+                    <h1>${c.name}</h1>
+                    <p class="detail-desc">${c.description || 'ไม่มีคำอธิบายสำหรับการ์ดนี้'}</p>
+                    <div class="detail-fields">
+                        <div class="detail-field"><div class="detail-field-label">ซีรีส์</div><div class="detail-field-value">${GAME_NAMES[c.category]||c.category}</div></div>
+                        <div class="detail-field"><div class="detail-field-label">ประเภทย่อย</div><div class="detail-field-value">${c.subcategory||'-'}</div></div>
+                        <div class="detail-field"><div class="detail-field-label">ชุด (Set)</div><div class="detail-field-value">${c.set_name||'-'}</div></div>
+                        <div class="detail-field"><div class="detail-field-label">หมายเลขการ์ด</div><div class="detail-field-value">${c.card_number||'-'}</div></div>
+                        <div class="detail-field"><div class="detail-field-label">ราคาอ้างอิง</div><div class="detail-field-value">฿${parseFloat(c.price||0).toFixed(2)}</div></div>
+                        <div class="detail-field"><div class="detail-field-label">จำนวนที่ทราบ</div><div class="detail-field-value">${c.stock_quantity ?? '-'}</div></div>
+                    </div>
+                </div>`;
+            document.getElementById('detail-actions').innerHTML = `
+                <button class="cta-btn" onclick="closeModal('detail-view'); openEditModal('${c.product_id}')">✏️ แก้ไขข้อมูล</button>
+                <button class="cta-btn danger" onclick="closeModal('detail-view'); openDeleteModal('${c.product_id}','${c.name.replace(/'/g,"\\'")}')">🗑️ ลบ</button>`;
+        } catch (err) {
+            document.getElementById('detail-content').innerHTML = `<div class="empty-state"><p>${err.message}</p></div>`;
+        }
+    }
+
+    // =========== CREATE ===========
+    function openAddModal() {
+        if (!currentUser) { toast('🔐 กรุณาเข้าสู่ระบบก่อนเพิ่มการ์ด', 'error'); window.location.href='login.html'; return; }
+        editMode = false;
+        document.getElementById('modal-title').textContent = '➕ เพิ่มการ์ดใหม่เข้าฐานข้อมูล';
+        document.getElementById('card-form').reset();
+        document.getElementById('form-id').value = '';
+        document.getElementById('form-image-url').value = '';
+        document.getElementById('image-preview').innerHTML = '';
+        document.getElementById('form-image-file').value = '';
+        openModal('modal-form');
+    }
+
+    // =========== UPDATE ===========
+    async function openEditModal(id) {
+        if (!currentUser) { toast('🔐 กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูล', 'error'); window.location.href='login.html'; return; }
+        editMode = true;
+        document.getElementById('modal-title').textContent = '✏️ แก้ไขข้อมูลการ์ด';
+        try {
+            const res = await fetch(`/api/products/${id}`);
+            const c = await res.json();
+            document.getElementById('form-id').value = c.product_id;
+            document.getElementById('form-category').value = c.category || '';
+            document.getElementById('form-subcategory').value = c.subcategory || '';
+            document.getElementById('form-name').value = c.name || '';
+            document.getElementById('form-description').value = c.description || '';
+            document.getElementById('form-price').value = c.price || '';
+            document.getElementById('form-stock').value = c.stock_quantity ?? '';
+            document.getElementById('form-rarity').value = c.rarity || 'Common';
+            document.getElementById('form-set').value = c.set_name || '';
+            document.getElementById('form-cardnum').value = c.card_number || '';
+            document.getElementById('form-image-url').value = c.image_url || '';
+            document.getElementById('form-image-file').value = '';
+            document.getElementById('image-preview').innerHTML = c.image_url ? `<img src="${c.image_url}" style="max-width:100%; max-height:150px; object-fit:contain;">` : '';
+            // Disable category in edit mode
+            document.getElementById('form-category').disabled = true;
+            openModal('modal-form');
+        } catch (err) { toast('ไม่สามารถโหลดข้อมูลได้', 'error'); }
+    }
+
+    // =========== SUBMIT (Create or Update) ===========
+    async function submitForm() {
+        const id = document.getElementById('form-id').value;
+        const category = document.getElementById('form-category').value;
+        const name = document.getElementById('form-name').value.trim();
+        if (!category || !name) { toast('กรุณากรอกซีรีส์และชื่อการ์ด', 'error'); return; }
+
+        const btn = document.getElementById('btn-submit-form');
+        btn.disabled = true;
+        btn.textContent = '⏳ กำลังบันทึก...';
+
+        const fileInput = document.getElementById('form-image-file');
+        let finalImageUrl = document.getElementById('form-image-url').value.trim();
+
+        if (fileInput.files && fileInput.files[0]) {
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+            formData.append('category', category);
+            
+            try {
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!uploadRes.ok) throw new Error('อัปโหลดรูปภาพไม่สำเร็จ');
+                const uploadData = await uploadRes.json();
+                finalImageUrl = uploadData.imageUrl;
+            } catch (err) {
+                toast('❌ ' + err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '💾 บันทึก';
+                return;
+            }
+        }
+
+        const data = {
+            category, name,
+            subcategory: document.getElementById('form-subcategory').value.trim() || 'general',
+            description: document.getElementById('form-description').value.trim(),
+            price: parseFloat(document.getElementById('form-price').value) || 0,
+            stock_quantity: parseInt(document.getElementById('form-stock').value) || 0,
+            rarity: document.getElementById('form-rarity').value,
+            set_name: document.getElementById('form-set').value.trim(),
+            card_number: document.getElementById('form-cardnum').value.trim(),
+            image_url: finalImageUrl
+        };
+
+        try {
+            if (editMode && id) {
+                // UPDATE
+                const cql = `UPDATE products_by_id SET price=?, stock_quantity=?, description=?, ... WHERE product_id=${id} IF EXISTS`;
+                addCqlLog('UPDATE', cql);
+                const res = await fetch(`/api/products/${id}`, {
+                    method: 'PUT', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ price: data.price, stock_quantity: data.stock_quantity, description: data.description, is_available: true })
+                });
+                if (!res.ok) throw new Error('Update failed');
+                toast('✅ อัปเดตข้อมูลการ์ดสำเร็จ (LWT: IF EXISTS)', 'success');
+            } else {
+                // CREATE
+                const cql = `BATCH: INSERT INTO products (...) VALUES (...); INSERT INTO products_by_id (...) VALUES (...)`;
+                addCqlLog('INSERT', cql);
+                const res = await fetch('/api/products', {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Create failed');
+                const result = await res.json();
+                toast(`✅ เพิ่มการ์ดสำเร็จ — ID: ${result.product_id}`, 'success');
+            }
+            closeModal('modal-form');
+            document.getElementById('form-category').disabled = false;
+            loadCards(currentFilter);
+        } catch (err) { toast('❌ เกิดข้อผิดพลาด: ' + err.message, 'error'); }
+        finally {
+            btn.disabled = false;
+            btn.textContent = '💾 บันทึก';
+        }
+    }
+
+    // =========== DELETE ===========
+    function openDeleteModal(id, name) {
+        if (!currentUser) { toast('🔐 กรุณาเข้าสู่ระบบก่อนลบการ์ด', 'error'); window.location.href='login.html'; return; }
+        deleteTargetId = id;
+        document.getElementById('delete-card-name').textContent = name;
+        openModal('modal-delete');
+    }
+
+    async function confirmDelete() {
+        if (!deleteTargetId) return;
+        const cql = `BATCH: DELETE FROM products_by_id WHERE product_id=${deleteTargetId}; DELETE FROM products WHERE category=? AND subcategory=? AND product_id=${deleteTargetId}`;
+        addCqlLog('DELETE', cql);
+        try {
+            const res = await fetch(`/api/products/${deleteTargetId}/permanent`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Delete failed');
+            toast('✅ ลบการ์ดสำเร็จ (Batch DELETE จาก 2 ตาราง)', 'success');
+            closeModal('modal-delete');
+            deleteTargetId = null;
+            loadCards(currentFilter);
+        } catch (err) { toast('❌ ลบไม่สำเร็จ: ' + err.message, 'error'); }
+    }
+
+    // =========== SEARCH ===========
+    let searchTimeout;
+    function handleSearch(query) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(async () => {
+            if (!query.trim()) { loadCards(currentFilter); return; }
+            try {
+                addCqlLog('SELECT', `SELECT * FROM products_by_id (filter: name LIKE '%${query}%')`);
+                const res = await fetch(`/api/products/search?name=${encodeURIComponent(query)}`);
+                const cards = await res.json();
+                renderCards(cards);
+            } catch (err) { toast('ค้นหาไม่สำเร็จ', 'error'); }
+        }, 400);
+    }
+
+    // =========== EVENT LISTENERS ===========
+    document.getElementById('btn-add-card').addEventListener('click', openAddModal);
+    document.getElementById('btn-submit-form').addEventListener('click', submitForm);
+    document.getElementById('btn-confirm-delete').addEventListener('click', confirmDelete);
+    document.getElementById('btn-toggle-cql').addEventListener('click', toggleCqlPanel);
+    document.getElementById('search-input').addEventListener('input', e => handleSearch(e.target.value));
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => document.querySelector('.nav-links').classList.toggle('open'));
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            document.getElementById('search-input').value = '';
+            loadCards(currentFilter);
+        });
+    });
+
+    // Check URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameParam = urlParams.get('game');
+    const searchParam = urlParams.get('search');
+
+    if (searchParam) {
+        document.getElementById('search-input').value = searchParam;
+        handleSearch(searchParam);
+    } else if (gameParam) {
+        currentFilter = gameParam;
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.filter === gameParam);
+        });
+        loadCards(gameParam);
+    } else {
+        loadCards('all');
+    }
+
+    // DB health
+    fetch('/health').then(r=>r.json()).then(d=>{
+        if(d.status!=='ok') document.getElementById('nav-db-status').classList.add('offline');
+    }).catch(()=>document.getElementById('nav-db-status').classList.add('offline'));
+
+    // Auth state
+    fetch('/api/auth/me').then(r=>r.json()).then(d=>{
+        const el = document.getElementById('nav-auth-link');
+        if (d.loggedIn) {
+            currentUser = d.user;
+            el.innerHTML = `<span style="color:var(--accent-secondary);font-size:0.85rem;">👤 ${d.user.display_name}</span> <a href="#" onclick="fetch('/api/auth/logout',{method:'POST'}).then(()=>location.reload())" style="color:var(--text-muted);font-size:0.8rem;margin-left:0.5rem;">ออกจากระบบ</a>`;
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,14 +1,15 @@
 /* =========================================
-   Footer
+   Footer — Card Database Wiki
    ========================================= */
 footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 3rem 2rem;
-    margin-top: 4rem;
+    border-top: 1px solid rgba(48, 54, 61, 0.5);
+    padding: 2rem 1.5rem;
+    margin-top: 3rem;
+    background: rgba(8, 11, 20, 0.5);
 }
 
 .footer-content {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -16,8 +17,40 @@ footer {
 }
 
 .footer-content p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-links a {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    transition: var(--transition-fast);
+}
+
+.footer-links a:hover {
+    color: var(--accent-primary);
+}
+
+.footer-tech {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.footer-tech .tech-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(88, 166, 255, 0.08);
+    color: var(--accent-info);
+    font-size: 0.72rem;
+    font-weight: 600;
 }
 
 /* Responsive Footer */

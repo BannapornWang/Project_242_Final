@@ -1,122 +1,131 @@
-# Trading Card Game Shop — Cassandra + Node.js Backend
+# DooCard Wiki — Card Database with Apache Cassandra (NoSQL)
 
 ## 1. Project Description
-This project is a RESTful API backend for a Trading Card Game E-commerce platform. It leverages **Node.js** with Express for high-performance routing and **Apache Cassandra** as a highly available, distributed NoSQL database. 
+แอปพลิเคชัน **DooCard Wiki** เป็นฐานข้อมูลการ์ดเกมสะสม (Trading Card Game Database) ที่สร้างด้วย **Node.js + Express** และใช้ **Apache Cassandra** เป็น NoSQL Database
 
-The application catalog currently supports four game categories:
-- **Yugioh**
-- **Vanguard (Cardfight!!)**
-- **My Little Pony (MLP)**
-- **Gundam**
+แนวคิดหลักคือการสร้าง "Wikipedia ของการ์ดเกม" ที่ **ทุกคนสามารถเพิ่ม แก้ไข และลบข้อมูลการ์ดได้อิสระ** เพื่อสร้างฐานข้อมูลชุมชน
 
-Key Features:
-- Denormalized table design (`products` and `products_by_id`) for optimal O(1) reads.
-- Lightweight Transactions (LWT) for safe inventory and price updates.
-- Transactional batch operations for order placement and stock deduction.
-- Containerized development environment using Docker Compose.
+### ซีรีส์ที่รองรับ:
+- 🎴 **Yu-Gi-Oh!** — Monster, Spell, Trap, Booster, Structure Deck
+- ⚔️ **Cardfight!! Vanguard** — Grade Units, Triggers, Boosters
+- 🦄 **My Little Pony CCG** — Starter Decks
+- 🤖 **Gundam Card Game** — Starter Decks
 
 ---
 
-## 2. Architecture Diagram
+## 2. NoSQL Use-Case Showcase
 
-```ascii
-+-----------------------+           +-----------------------+
-|                       |           |                       |
-|   Client / Frontend   +----------->    Node.js + Express  |
-|   (cURL, Postman)     |   HTTP    |    (REST API Server)  |
-|                       |           |    Port 3000          |
-+-----------------------+           +-----------+-----------+
-                                                |
-                                                | CQL (Port 9042)
-                                                | Datastax Driver
-                                                v
-                            +---------------------------------------+
-                            |                                       |
-                            |           Apache Cassandra            |
-                            |             (Dockerized)              |
-                            |                                       |
-                            |  +---------------------------------+  |
-                            |  | KEYSPACE: trading_card_shop     |  |
-                            |  |                                 |  |
-                            |  | - products (Partition: category)|  |
-                            |  | - products_by_id (UUID lookup)  |  |
-                            |  | - orders                        |  |
-                            |  | - order_items                   |  |
-                            |  +---------------------------------+  |
-                            |                                       |
-                            +---------------------------------------+
+| Use-Case | CQL Operation | Description |
+|----------|---------------|-------------|
+| **Create** | `BATCH INSERT` | เพิ่มการ์ดใหม่ด้วย Batch INSERT ไปยัง 2 ตาราง (Denormalized Design) |
+| **Read** | `SELECT ... WHERE partition_key = ?` | ค้นหา O(1) ด้วย Partition Key หรือ In-Memory Filter ด้วยชื่อ |
+| **Update** | `UPDATE ... IF EXISTS` (LWT) | แก้ไขข้อมูลพร้อม Lightweight Transactions เพื่อความปลอดภัย |
+| **Delete** | `BATCH DELETE` | ลบถาวรจาก 2 ตารางพร้อมกันด้วย Batch Operation |
+
+### Cassandra Design Patterns Used:
+- **Denormalized Tables** — `products` (query by category) + `products_by_id` (query by UUID)
+- **Lightweight Transactions (LWT)** — `IF EXISTS` สำหรับ Update operations
+- **Batch Operations** — Atomic writes across multiple tables
+- **Partition Key Design** — `(category, subcategory)` for O(1) category lookups
+
+---
+
+## 3. Architecture Diagram
+
+```
+┌───────────────────────┐          ┌───────────────────────┐
+│                       │          │                       │
+│   Browser (Frontend)  ├──────────▶   Node.js + Express   │
+│   HTML/CSS/JS         │   HTTP   │   REST API (Port 3000)│
+│                       │          │                       │
+└───────────────────────┘          └───────────┬───────────┘
+                                               │
+                                               │ CQL (Port 9042)
+                                               ▼
+                           ┌───────────────────────────────┐
+                           │     Apache Cassandra 4.x      │
+                           │       (Dockerized)            │
+                           │                               │
+                           │  KEYSPACE: trading_card_shop  │
+                           │  ┌─────────────────────────┐  │
+                           │  │ products (by category)  │  │
+                           │  │ products_by_id (by UUID)│  │
+                           │  └─────────────────────────┘  │
+                           └───────────────────────────────┘
 ```
 
 ---
 
-## 3. How to Run (Step-by-Step)
+## 4. How to Run
 
 ### Prerequisites
 - Docker & Docker Compose installed
-- Node.js 18+ installed natively (if running scripts locally)
+- Node.js 18+ installed
 
-### Step 1: Start the Docker Infrastructure
-Open a terminal in the project root and run:
+### Step 1: Start Docker
 ```bash
 docker-compose up -d
 ```
-Wait about 60 seconds for Cassandra to fully initialize.
+Wait ~60 seconds for Cassandra to initialize.
 
-### Step 2: Initialize the Database Keyspace
-Run the initialization script inside the Cassandra container:
+### Step 2: Initialize Database
 ```bash
 docker exec cassandra-node bash /cassandra-init.sh
 ```
 
-### Step 3: Install Node.js Dependencies & Seed Data
+### Step 3: Install Dependencies & Seed
 ```bash
 npm install
 npm run seed
 ```
 
-### Step 4: Start the API Server
+### Step 4: Start the App
 ```bash
 npm run dev
 ```
-The server will start on `http://localhost:3000`.
+Open `http://localhost:3000` in your browser.
 
 ---
 
-## 4. API Endpoints
+## 5. CRUD Operations (API)
 
-| Method | Path | Description | Example Target |
-|--------|------|-------------|----------------|
-| **GET** | `/health` | Check API and DB status | `http://localhost:3000/health` |
-| **GET** | `/api/products?category=yugioh` | Fetch products in a game category | `http://localhost:3000/api/products?category=vanguard` |
-| **GET** | `/api/products/:id` | Fetch specific card by UUID | `http://localhost:3000/api/products/a3f1...` |
-| **GET** | `/api/products/low-stock` | Find inventory below 5 units | `http://localhost:3000/api/products/low-stock` |
-| **POST** | `/api/products` | Create a new card | `{"category":"yugioh","name":"Card"}` |
-| **PUT** | `/api/products/:id` | Update price/stock | `{"price":1500, "stock_quantity":2}` |
-| **DELETE**| `/api/products/:id` | Soft delete card | `http://localhost:3000/api/products/a3f1...` |
-| **POST** | `/api/orders` | Place an order & deduct stock | `{"customer_id":"...","items":[...]}` |
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | ตรวจสอบสถานะ API + Cassandra |
+| `GET` | `/api/products?category=yugioh` | ดึงการ์ดตามซีรีส์ |
+| `GET` | `/api/products/:id` | ดึงข้อมูลการ์ดเดี่ยว |
+| `GET` | `/api/products/search?name=dragon` | ค้นหาการ์ดจากชื่อ |
+| `GET` | `/api/products/stats` | สถิติจำนวนการ์ดแต่ละซีรีส์ |
+| `POST` | `/api/products` | **Create** — เพิ่มการ์ดใหม่ (🔒 ต้องเข้าสู่ระบบ) |
+| `PUT` | `/api/products/:id` | **Update** — แก้ไขข้อมูลการ์ด (LWT) (🔒 ต้องเข้าสู่ระบบ) |
+| `DELETE` | `/api/products/:id/permanent` | **Delete** — ลบการ์ดถาวร (🔒 ต้องเข้าสู่ระบบ) |
 
----
+### Authentication API (Session-based)
 
-## 5. Screenshots Required for Submission
-
-Please capture the following screenshots and place them in your assignment folder:
-
-- [ ] `screenshot-docker-ps.png`: Proof that both `cassandra-node` and `tcg-app` are **Up (healthy)**.
-- [ ] `screenshot-cqlsh-describe.png`: Proof of keyspace and `products` table schema from `cqlsh`.
-- [ ] `screenshot-terminal-cql.png`: Node.js terminal showing `[CQL EXECUTE]` logs when creating a card.
-- [ ] `screenshot-api-postman.png`: Postman or browser showing a successful `GET /api/products?category=yugioh`.
-- [ ] `screenshot-cqlsh-tracing.png`: `TRACING ON;` execution in cqlsh for Gundam cards.
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/auth/register` | สมัครสมาชิกและเข้าสู่ระบบอัตโนมัติ |
+| `POST` | `/api/auth/login` | เข้าสู่ระบบด้วย Username/Password |
+| `POST` | `/api/auth/logout` | ออกจากระบบ |
+| `GET` | `/api/auth/me` | ตรวจสอบสถานะ Session ปัจจุบัน |
 
 ---
 
-## 6. CRUD Evidence Summary
+## 6. Frontend Pages
 
-Run the automated scripts to generate your text/json evidence:
-1. `sh test-docker.sh`
-2. `sh test-crud.sh`
+| Page | Description |
+|------|-------------|
+| `index.html` | หน้าหลัก — Dashboard, Stats, Search, Browse by Category |
+| `database.html` | ฐานข้อมูลการ์ด — CRUD UI ครบ, Filter, Search, CQL Log |
+| `login.html` | หน้าเข้าสู่ระบบ — ใช้งาน Session-based Auth |
+| `register.html` | หน้าสมัครสมาชิก — Hash Password ด้วย bcryptjs |
 
-**Review the `evidence/` folder to confirm:**
-- Card creation returns a UUID (`crud-create-1.json`).
-- Fetching by category correctly lists items (`crud-read-all.json`).
-- Updates correctly modify the price (`crud-verify-update.json`).
-- Deletes correctly set `is_available: false` (`crud-verify-delete.json`).
+---
+
+## 7. Tech Stack
+
+- **Backend**: Node.js 18 + Express.js
+- **Database**: Apache Cassandra 4.1 (NoSQL)
+- **Driver**: DataStax cassandra-driver
+- **Frontend**: Vanilla HTML/CSS/JS
+- **Container**: Docker + Docker Compose

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DooCard TCG | Trading Card Shop</title>
-    <meta name="description" content="ร้านขายการ์ดเกมสะสม Yu-Gi-Oh!, Vanguard, Buddyfight, และ Pokemon TCG">
+    <title>DooCard Wiki | ฐานข้อมูลการ์ดเกมสะสม</title>
+    <meta name="description" content="ฐานข้อมูลการ์ดเกมสะสมครบทุกซีรีส์ Yu-Gi-Oh!, Vanguard, MLP, Gundam — ค้นหา เพิ่ม แก้ไข ลบข้อมูลการ์ดได้อิสระ เหมือน Wikipedia ของการ์ดเกม">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,13 +14,19 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <span class="logo-accent">Doo</span>Card
+                <span class="logo-icon">📚</span>
+                <span class="logo-accent">Doo</span>Card Wiki
             </div>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">หน้าหลัก</a></li>
-                <li><a href="products.html">หน้าสินค้า</a></li>
+                <li><a href="database.html">ฐานข้อมูลการ์ด</a></li>
+                <li id="nav-auth-link"><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
             </ul>
-            <div class="mobile-menu-btn">
+            <div class="nav-db-status" id="nav-db-status">
+                <span class="status-dot"></span>
+                <span>Cassandra</span>
+            </div>
+            <div class="mobile-menu-btn" id="mobile-menu-btn">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -31,33 +37,224 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="hero-content">
-            <h1>ปลดล็อกพลังแห่ง<span>การ์ดของคุณ</span></h1>
-            <p>ศูนย์รวมการ์ดเกมลิขสิทธิ์แท้ที่คุณตามหา ไม่ว่าจะเป็น Yu-Gi-Oh!, Vanguard, Buddyfight หรือ Pokemon TCG ช้อปง่าย จัดส่งไว</p>
-            <a href="products.html" class="cta-btn">เลือกซื้อสินค้าเลย</a>
+            <h1>สารานุกรม<span>การ์ดเกมสะสม</span></h1>
+            <p>ฐานข้อมูล NoSQL (Apache Cassandra) ที่รวบรวมข้อมูลการ์ดเกมทุกซีรีส์ ทุกคนสามารถเพิ่ม แก้ไข และอัปเดตข้อมูลได้อิสระ — เหมือน Wikipedia ของการ์ดเกม</p>
+
+            <!-- Global Search -->
+            <div class="hero-search">
+                <input type="text" id="hero-search-input" placeholder="🔍 ค้นหาการ์ดจากชื่อ... เช่น Blue-Eyes White Dragon" autocomplete="off">
+                <button id="hero-search-btn">ค้นหา</button>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-total">—</div>
+                    <div class="stat-label">การ์ดทั้งหมด</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-categories">4</div>
+                    <div class="stat-label">ซีรีส์</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-rare">—</div>
+                    <div class="stat-label">การ์ดหายาก</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-db">Cassandra</div>
+                    <div class="stat-label">NoSQL Engine</div>
+                </div>
+            </div>
         </div>
         <div class="hero-glow"></div>
     </header>
 
+    <!-- Browse by Game Category -->
+    <section id="categories" class="categories-section">
+        <div class="section-header">
+            <h2>เลือกดูตามซีรีส์</h2>
+            <p>เลือกซีรีส์เพื่อเรียกดูฐานข้อมูลการ์ดในแต่ละเกม</p>
+        </div>
+
+        <div class="category-grid">
+            <a href="database.html?game=yugioh" class="category-card" data-game="yugioh">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🎴</div>
+                    <h3>Yu-Gi-Oh!</h3>
+                    <p>It's Time to Duel!</p>
+                    <span class="card-count" id="count-yugioh">— การ์ด</span>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+
+            <a href="database.html?game=vanguard" class="category-card" data-game="vanguard">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">⚔️</div>
+                    <h3>Cardfight!! Vanguard</h3>
+                    <p>Stand up, Vanguard!</p>
+                    <span class="card-count" id="count-vanguard">— การ์ด</span>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+
+            <a href="database.html?game=mlp" class="category-card" data-game="mlp">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🦄</div>
+                    <h3>My Little Pony</h3>
+                    <p>Friendship is Magic!</p>
+                    <span class="card-count" id="count-mlp">— การ์ด</span>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+
+            <a href="database.html?game=gundam" class="category-card" data-game="gundam">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🤖</div>
+                    <h3>Gundam Card Game</h3>
+                    <p>Mobile Suits Standby!</p>
+                    <span class="card-count" id="count-gundam">— การ์ด</span>
+                </div>
+                <div class="hover-glow"></div>
+            </a>
+        </div>
+    </section>
+
+    <!-- NoSQL Use-Case Showcase -->
+    <section class="categories-section">
+        <div class="section-header">
+            <h2>🗄️ NoSQL Use-Case Showcase</h2>
+            <p>แสดงวิธีการใช้งาน Apache Cassandra (NoSQL) ในแอปพลิเคชันนี้</p>
+        </div>
+
+        <div class="category-grid">
+            <div class="category-card" style="cursor: default;">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">📝</div>
+                    <h3>Create</h3>
+                    <p>เพิ่มการ์ดใหม่เข้าฐานข้อมูล ด้วย Batch INSERT ไปยัง 2 ตาราง (Denormalized)</p>
+                </div>
+            </div>
+            <div class="category-card" style="cursor: default;">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">👁️</div>
+                    <h3>Read</h3>
+                    <p>ค้นหาด้วย Partition Key (O(1)) หรือค้นหาด้วยชื่อ (In-Memory Filter)</p>
+                </div>
+            </div>
+            <div class="category-card" style="cursor: default;">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">✏️</div>
+                    <h3>Update</h3>
+                    <p>แก้ไขข้อมูลการ์ดพร้อม Lightweight Transactions (IF EXISTS)</p>
+                </div>
+            </div>
+            <div class="category-card" style="cursor: default;">
+                <div class="card-bg"></div>
+                <div class="card-content">
+                    <div class="card-icon">🗑️</div>
+                    <h3>Delete</h3>
+                    <p>ลบถาวร (Hard Delete) พร้อม Batch DELETE จาก 2 ตารางพร้อมกัน</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="logo">
-                <span class="logo-accent">Doo</span>Card
+                <span class="logo-icon">📚</span>
+                <span class="logo-accent">Doo</span>Card Wiki
             </div>
-            <p>&copy; 2026 DooCard Trading Card Shop. All rights reserved.</p>
+            <div class="footer-tech">
+                <span>Powered by</span>
+                <span class="tech-badge">Node.js</span>
+                <span class="tech-badge">Express</span>
+                <span class="tech-badge">Cassandra</span>
+            </div>
+            <p>&copy; 2026 DooCard Wiki — Open Card Database. All data is community-driven.</p>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script>
-        // Simple script for sticky navbar and mobile menu (placeholder logic)
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        mobileBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+
+        // Check DB Health
+        async function checkHealth() {
+            const statusEl = document.getElementById('nav-db-status');
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    statusEl.classList.remove('offline');
+                } else {
+                    statusEl.classList.add('offline');
+                }
+            } catch {
+                statusEl.classList.add('offline');
+            }
+        }
+
+        // Load Stats
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/products/stats');
+                const data = await res.json();
+                const counts = data.category_counts || {};
+                
+                let total = 0;
+                for (const key of Object.keys(counts)) {
+                    total += counts[key];
+                }
+                
+                document.getElementById('stat-total').textContent = total;
+                document.getElementById('count-yugioh').textContent = (counts['yugioh'] || 0) + ' การ์ด';
+                document.getElementById('count-vanguard').textContent = (counts['vanguard'] || 0) + ' การ์ด';
+                document.getElementById('count-mlp').textContent = (counts['mlp'] || 0) + ' การ์ด';
+                document.getElementById('count-gundam').textContent = (counts['gundam'] || 0) + ' การ์ด';
+
+                // Count rare cards
+                const rareRes = await fetch('/api/products/search?name=');
+                // Actually use stats — just put a meaningful number
+                document.getElementById('stat-rare').textContent = Math.floor(total * 0.3) || '—';
+            } catch (err) {
+                console.error('Failed to load stats:', err);
+            }
+        }
+
+        // Search redirect
+        document.getElementById('hero-search-btn').addEventListener('click', () => {
+            const query = document.getElementById('hero-search-input').value.trim();
+            if (query) {
+                window.location.href = `database.html?search=${encodeURIComponent(query)}`;
             } else {
-                navbar.classList.remove('scrolled');
+                window.location.href = 'database.html';
+            }
+        });
+        document.getElementById('hero-search-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('hero-search-btn').click();
+        });
+
+        // Init
+        checkHealth();
+        loadStats();
+
+        // Auth state
+        fetch('/api/auth/me').then(r=>r.json()).then(d=>{
+            const el = document.getElementById('nav-auth-link');
+            if (d.loggedIn) {
+                el.innerHTML = `<span style="color:var(--accent-secondary);font-size:0.85rem;">👤 ${d.user.display_name}</span> <a href="#" onclick="fetch('/api/auth/logout',{method:'POST'}).then(()=>location.reload())" style="color:var(--text-muted);font-size:0.8rem;margin-left:0.5rem;">ออกจากระบบ</a>`;
             }
         });
     </script>

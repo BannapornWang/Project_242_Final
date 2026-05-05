@@ -2,7 +2,7 @@ const client = require('../config/cassandra');
 const cassandra = require('cassandra-driver');
 
 class Product {
-  // CREATE
+  // CREATE — Batch INSERT into both denormalized tables
   static async create(data) {
     const id = cassandra.types.Uuid.random();
     
@@ -63,12 +63,13 @@ class Product {
     return result.rows[0];
   }
 
-  // SEARCH BY NAME
+  // SEARCH BY NAME — In-memory filter (Cassandra doesn't support LIKE natively)
   static async searchByName(name) {
     const query = 'SELECT * FROM products_by_id LIMIT 1000';
     console.log(`\n[CQL EXECUTE] SEARCH BY NAME (In-Memory Filter)`);
     console.log(`Query: ${query}`);
     const result = await client.execute(query, [], { prepare: true });
+    if (!name || !name.trim()) return result.rows;
     const lowerName = name.toLowerCase();
     return result.rows.filter(row => row.name.toLowerCase().includes(lowerName));
   }
@@ -82,24 +83,29 @@ class Product {
     return result.rows;
   }
 
-  // UPDATE
+  // UPDATE — Lightweight Transactions (IF EXISTS) on both tables
   static async update(id, data) {
     const existing = await this.getById(id);
     if (!existing) return null;
+
+    const price = data.price !== undefined ? data.price : existing.price;
+    const stock = data.stock_quantity !== undefined ? data.stock_quantity : existing.stock_quantity;
+    const desc = data.description !== undefined ? data.description : existing.description;
+    const avail = data.is_available !== undefined ? data.is_available : existing.is_available;
 
     const query1 = `
       UPDATE products_by_id 
       SET price = ?, stock_quantity = ?, description = ?, is_available = ?, updated_at = toTimestamp(now())
       WHERE product_id = ? IF EXISTS
     `;
-    const params1 = [data.price, data.stock_quantity, data.description, data.is_available, id];
+    const params1 = [price, stock, desc, avail, id];
 
     const query2 = `
       UPDATE products 
       SET price = ?, stock_quantity = ?, description = ?, is_available = ?, updated_at = toTimestamp(now())
       WHERE category = ? AND subcategory = ? AND product_id = ? IF EXISTS
     `;
-    const params2 = [data.price, data.stock_quantity, data.description, data.is_available, existing.category, existing.subcategory, id];
+    const params2 = [price, stock, desc, avail, existing.category, existing.subcategory, id];
 
     console.log(`\n[CQL EXECUTE] UPDATE PRODUCT (LWT)`);
     console.log(`Query 1 (products_by_id): ${query1.trim()}`);
@@ -130,7 +136,7 @@ class Product {
     return true;
   }
 
-  // HARD DELETE
+  // HARD DELETE — Batch DELETE from both tables
   static async hardDelete(id) {
     const existing = await this.getById(id);
     if (!existing) return null;
@@ -150,7 +156,7 @@ class Product {
     return true;
   }
 
-  // STATS
+  // STATS — Count cards per category (aggregated in JS)
   static async getStats() {
     const query = 'SELECT category FROM products_by_id';
     console.log(`\n[CQL EXECUTE] GET STATS (Aggregated in JS)`);

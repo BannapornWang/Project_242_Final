@@ -1,0 +1,9 @@
+// Auth middleware — protect CRUD routes (POST, PUT, DELETE)
+function requireAuth(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  }
+  return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบก่อนทำรายการนี้' });
+}
+
+module.exports = { requireAuth };

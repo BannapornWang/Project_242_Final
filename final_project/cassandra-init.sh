@@ -89,26 +89,40 @@ USE ${KEYSPACE};
 
 -- Products table: main catalog of cards/items
 CREATE TABLE IF NOT EXISTS ${KEYSPACE}.products (
-  product_id   UUID PRIMARY KEY,
-  category     TEXT,          -- 'yugioh' | 'vanguard' | 'mlp' | 'gundam'
+  category     TEXT,
+  subcategory  TEXT,
+  product_id   UUID,
   name         TEXT,
   description  TEXT,
   price        DECIMAL,
-  stock        INT,
+  stock_quantity INT,
+  rarity       TEXT,
+  set_name     TEXT,
+  card_number  TEXT,
   image_url    TEXT,
+  is_available BOOLEAN,
+  created_at   TIMESTAMP,
+  updated_at   TIMESTAMP,
+  PRIMARY KEY ((category, subcategory), product_id)
+);
+
+-- Products by ID: lookup table for individual products
+CREATE TABLE IF NOT EXISTS ${KEYSPACE}.products_by_id (
+  product_id   UUID PRIMARY KEY,
+  category     TEXT,
+  subcategory  TEXT,
+  name         TEXT,
+  description  TEXT,
+  price        DECIMAL,
+  stock_quantity INT,
+  rarity       TEXT,
+  set_name     TEXT,
+  card_number  TEXT,
+  image_url    TEXT,
+  is_available BOOLEAN,
   created_at   TIMESTAMP,
   updated_at   TIMESTAMP
 );
-
--- Products by category: query cards by category efficiently
-CREATE TABLE IF NOT EXISTS ${KEYSPACE}.products_by_category (
-  category     TEXT,
-  product_id   UUID,
-  name         TEXT,
-  price        DECIMAL,
-  stock        INT,
-  PRIMARY KEY (category, product_id)
-) WITH CLUSTERING ORDER BY (product_id ASC);
 
 -- Orders table: customer orders
 CREATE TABLE IF NOT EXISTS ${KEYSPACE}.orders (
@@ -158,8 +172,7 @@ echo ""
 echo "=============================================="
 echo "  ✓ Cassandra initialization COMPLETE!"
 echo "  Keyspace  : trading_card_shop"
-echo "  Tables    : products, products_by_category,"
-echo "              orders, order_items"
+echo "  Tables    : products, products_by_id"
 echo "  Strategy  : SimpleStrategy (RF=1)"
 echo "=============================================="
 echo ""
@@ -172,14 +185,11 @@ echo ""
 #
 #   Tables in trading_card_shop:
 #     products
-#     products_by_category
-#     orders
-#     order_items
+#     products_by_id
 #
 #   ==============================================
 #   ✓ Cassandra initialization COMPLETE!
 #   Keyspace  : trading_card_shop
-#   Tables    : products, products_by_category,
-#               orders, order_items
+#   Tables    : products, products_by_id
 #   Strategy  : SimpleStrategy (RF=1)
 #   ==============================================
