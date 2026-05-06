@@ -17,3 +17,31 @@ VALUES ('vanguard', 'Normal Unit', 09af1d85-0845-411b-827e-34c343d9bed6, 'Youthb
 
 INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
 VALUES (09af1d85-0845-411b-827e-34c343d9bed6, 'vanguard', 'Normal Unit', 'Youthberk "Skyfall Arms"', 'เท่แบบหยุดไม่อยู่', 300, 500, 'Ultra Rare', 'RevolDress', 'D-SS12/SIR14EN', '/images/vanguard/1778038713610-669099959.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 8:25:45 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'grade_3_unit', 98ca3aec-4cf6-4ece-83b4-68ebeb78b80c, 'Blaster Blade', 'Grade 3 Royal Paladin พลัง 10000 — On Ride: ทำลาย rear-guard ฝ่ายตรงข้าม 1 ตัว การ์ดซิกเนเจอร์ของ Aichi Sendou', 750, 10, 'Rare', 'Cardfight!! Vanguard V Vol.01', 'V-BT01/006EN', '/images/cards/blaster_blade.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (98ca3aec-4cf6-4ece-83b4-68ebeb78b80c, 'vanguard', 'grade_3_unit', 'Blaster Blade', 'Grade 3 Royal Paladin พลัง 10000 — On Ride: ทำลาย rear-guard ฝ่ายตรงข้าม 1 ตัว การ์ดซิกเนเจอร์ของ Aichi Sendou', 750, 10, 'Rare', 'Cardfight!! Vanguard V Vol.01', 'V-BT01/006EN', '/images/cards/blaster_blade.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 8:25:46 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'trigger_unit', 7bba6c36-d0ac-482e-b374-44f7daf98eca, 'Bringer of Good Luck, Epona', 'Grade 0 Critical Trigger พลัง 5000 / Shield 30000 จำเป็นสำหรับเด็ค Royal Paladin', 220, 40, 'Common', 'V Extra Booster 16', 'V-EB16/030EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (7bba6c36-d0ac-482e-b374-44f7daf98eca, 'vanguard', 'trigger_unit', 'Bringer of Good Luck, Epona', 'Grade 0 Critical Trigger พลัง 5000 / Shield 30000 จำเป็นสำหรับเด็ค Royal Paladin', 220, 40, 'Common', 'V Extra Booster 16', 'V-EB16/030EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 8:25:46 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'booster_set', 3c5a6b26-59e6-4143-b665-55b819c367d2, 'V Booster Set 12: Divine Lightning Radiance', '7 ใบต่อแพ็ค รองรับ Oracle Think Tank และ Narukami', 160, 150, 'Mixed', 'Divine Lightning Radiance', 'V-BT12-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (3c5a6b26-59e6-4143-b665-55b819c367d2, 'vanguard', 'booster_set', 'V Booster Set 12: Divine Lightning Radiance', '7 ใบต่อแพ็ค รองรับ Oracle Think Tank และ Narukami', 160, 150, 'Mixed', 'Divine Lightning Radiance', 'V-BT12-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 8:25:46 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'trial_deck', 287c92d9-6f4c-4c64-8f15-5b1827cb8ecd, 'Trial Deck: Royal Paladin — Blaster Blade Edition', 'เด็ค 50 ใบพร้อมเล่นสำหรับผู้เริ่มต้น มี RR 2 ใบ', 590, 25, 'Common', 'V Trial Deck 01', 'V-TD01-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (287c92d9-6f4c-4c64-8f15-5b1827cb8ecd, 'vanguard', 'trial_deck', 'Trial Deck: Royal Paladin — Blaster Blade Edition', 'เด็ค 50 ใบพร้อมเล่นสำหรับผู้เริ่มต้น มี RR 2 ใบ', 590, 25, 'Common', 'V Trial Deck 01', 'V-TD01-EN', '', true, toTimestamp(now()), toTimestamp(now()));
