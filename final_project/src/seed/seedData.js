@@ -124,8 +124,9 @@ async function seed() {
   
   for (const prod of sampleProducts) {
     // ตรวจสอบว่ามีสินค้าชื่อเดียวกันอยู่แล้วหรือไม่ เพื่อป้องกันข้อมูลซ้ำ
-    const existingProduct = await Product.find({ name: prod.name });
-    if (existingProduct.first()) {
+    const existingProducts = await Product.searchByName(prod.name);
+    const exists = existingProducts.some(p => p.name === prod.name);
+    if (exists) {
       console.log(`สินค้า "${prod.name}" มีอยู่แล้ว, ข้ามการเพิ่มข้อมูลนี้`);
     } else {
       const id = await Product.create(prod);

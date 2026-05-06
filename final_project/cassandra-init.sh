@@ -169,6 +169,32 @@ DESCRIBE TABLES;
 VERIFY
 
 echo ""
+# -----------------------------------------------------------------------------
+# STEP 4: Import Seed Data
+# Automatically import all .cql files found in /cassandra
+# -----------------------------------------------------------------------------
+if [ -d "/cassandra" ]; then
+  echo "[4/4] Importing seed data from /cassandra..."
+  echo ""
+  
+  # Set keyspace for the session
+  export CQLSH_HOST="${CASSANDRA_HOST}"
+  export CQLSH_PORT="${CASSANDRA_PORT}"
+  
+  for f in /cassandra/*.cql; do
+    if [ -f "$f" ]; then
+      echo "  -> Importing: $(basename "$f")..."
+      cqlsh "${CASSANDRA_HOST}" "${CASSANDRA_PORT}" -k "${KEYSPACE}" -f "$f" > /dev/null
+    fi
+  done
+  
+  echo ""
+  echo "  ✓ Seed data imported successfully!"
+  echo ""
+else
+  echo "[4/4] No /cassandra directory found, skipping seed import."
+fi
+
 echo "=============================================="
 echo "  ✓ Cassandra initialization COMPLETE!"
 echo "  Keyspace  : trading_card_shop"

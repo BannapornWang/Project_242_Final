@@ -48,6 +48,7 @@ services:
     volumes:
       - cassandra-data:/var/lib/cassandra          # Persist data across restarts
       - ./cassandra-init.sh:/cassandra-init.sh:ro  # Init script (read-only mount)
+      - ./cassandra:/cassandra:ro                  # Seed files (read-only mount)
     healthcheck:
       # nodetool status exits 0 only when Cassandra is fully up (UN = Up/Normal)
       test: ["CMD-SHELL", "nodetool status | grep -E '^UN'"]
