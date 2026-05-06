@@ -22,27 +22,45 @@ cd Project_242_Final/final_project
 ```
 > **สำคัญ:** โปรเจกต์หลักและไฟล์ตั้งค่า Docker ทั้งหมดจะอยู่ในโฟลเดอร์ `final_project`
 
-**2. เริ่มต้นการทำงานของระบบผ่าน Docker Compose**
+**2. การติดตั้งไฟล์ที่ถูกละเว้นโดย `.gitignore`**
+เนื่องจากโปรเจกต์นี้มีการตั้งค่า `.gitignore` เพื่อละเว้นไฟล์บางประเภทไม่ให้ติดไปกับ Git คุณจึงต้องดำเนินการเพิ่มเติมดังนี้:
+- **`node_modules/` (Dependencies):** ไฟล์ไลบรารีจะไม่ถูกพ่วงมาด้วย ให้ทำการดาวน์โหลดด้วยคำสั่ง:
+  ```bash
+  npm install
+  ```
+  *(แม้จะรันด้วย Docker เป็นหลัก แต่การติดตั้ง Local Dependencies จะช่วยให้ IDE เช่น VSCode รู้จักโค้ดและไม่แจ้ง Error)*
+- **`.env` (Environment Variables):** หากต้องการพัฒนานอก Docker หรือใช้ค่าคอนฟิกเฉพาะตัว ให้สร้างไฟล์ `.env` ในโฟลเดอร์ `final_project` และใส่ตัวแปรตั้งต้นดังนี้:
+  ```env
+  NODE_ENV=development
+  PORT=3000
+  CASSANDRA_HOST=127.0.0.1
+  CASSANDRA_PORT=9042
+  CASSANDRA_KEYSPACE=trading_card_shop
+  CASSANDRA_DC=datacenter1
+  ```
+  *(หมายเหตุ: หากคุณรันโปรเจกต์ด้วย Docker ตัว Docker Compose จะจัดการตัวแปรเหล่านี้ให้โดยอัตโนมัติ)*
+
+**3. เริ่มต้นการทำงานของระบบผ่าน Docker Compose**
 คำสั่งนี้จะทำการดาวน์โหลด Image และรัน Container ของฐานข้อมูล Cassandra และตัวเว็บไซต์ Node.js:
 ```bash
 docker-compose up -d
 ```
 > ⏳ **หมายเหตุ:** ระบบฐานข้อมูล Cassandra อาจใช้เวลาในการ Boot ขึ้นมาประมาณ 60 วินาที ควรรอให้พร้อมก่อนทำขั้นตอนต่อไป
 
-**3. สร้างโครงสร้างฐานข้อมูล (Keyspace & Tables)**
+**4. สร้างโครงสร้างฐานข้อมูล (Keyspace & Tables)**
 รันสคริปต์ตั้งค่าฐานข้อมูลที่เตรียมไว้ ซึ่งจะเข้าไปทำงานภายใน Container ของ Cassandra ทันที:
 ```bash
 docker exec -it cassandra-node bash /cassandra-init.sh
 ```
-*(คุณควรจะเห็นข้อความยืนยันว่า Keyspace 'trading_card_shop' สร้างสำเร็จ)*
+*(คุณควรจะเห็นข้อความยืนยันว่า Keyspace 'trading_card_shop' สร้างสำเร็จและโหลดข้อมูลเริ่มต้น)*
 
-**4. นำเข้าข้อมูลการ์ดเริ่มต้น (Seed Data)**
+**5. นำเข้าข้อมูลการ์ดเพิ่มเติม (Seed Data)**
 เติมข้อมูลตัวอย่างลงในฐานข้อมูล โดยสั่งให้แอปพลิเคชันฝั่ง Node.js รันคำสั่ง Seed:
 ```bash
 docker exec -it tcg-app npm run seed
 ```
 
-**5. เข้าใช้งานเว็บไซต์**
+**6. เข้าใช้งานเว็บไซต์**
 เมื่อเสร็จสิ้นขั้นตอนทั้งหมด คุณสามารถเปิดเบราว์เซอร์และเข้าไปที่:
 👉 **[http://localhost:3000](http://localhost:3000)**
 

@@ -66,3 +66,38 @@ VALUES ('yugioh', 'structure_deck', 2a7340d0-27be-4cb8-8838-6f9381c46486, 'Struc
 
 INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
 VALUES (2a7340d0-27be-4cb8-8838-6f9381c46486, 'yugioh', 'structure_deck', 'Structure Deck: Dragon''s Roar', 'เด็ค 40 ใบพร้อมเล่น ธีมดราก้อน มีการ์ด Exclusive ที่หาจากที่อื่นไม่ได้', 490, 30, 'Common', 'Dragon''s Roar Structure Deck', 'SD1-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 6:30:02 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'monster_card', d32b25c7-8620-4668-9dd7-546904a21b91, 'Blue-Eyes White Dragon', 'ดราก้อนตำนาน ATK 3000 / DEF 2500 การ์ดไอคอนิคของ Seto Kaiba จากยุค DM เป็นหนึ่งในการ์ดที่มีมูลค่าสะสมสูงที่สุดในประวัติศาสตร์ TCG', 3500, 5, 'Secret Rare', 'Legend of Blue Eyes White Dragon', 'LOB-EN001', '/images/cards/blue_eyes.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (d32b25c7-8620-4668-9dd7-546904a21b91, 'yugioh', 'monster_card', 'Blue-Eyes White Dragon', 'ดราก้อนตำนาน ATK 3000 / DEF 2500 การ์ดไอคอนิคของ Seto Kaiba จากยุค DM เป็นหนึ่งในการ์ดที่มีมูลค่าสะสมสูงที่สุดในประวัติศาสตร์ TCG', 3500, 5, 'Secret Rare', 'Legend of Blue Eyes White Dragon', 'LOB-EN001', '/images/cards/blue_eyes.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 6:30:02 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'spell_card', af8306aa-48d3-4c5a-bbaa-0488809302ba, 'Monster Reborn', 'Special Summon มอนสเตอร์จาก Graveyard ฝั่งใดก็ได้ — การ์ดมนตราระดับตำนานที่ถูก Ban/Limit มาตลอดประวัติศาสตร์', 850, 12, 'Super Rare', 'Metal Raiders', 'MRD-EN065', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (af8306aa-48d3-4c5a-bbaa-0488809302ba, 'yugioh', 'spell_card', 'Monster Reborn', 'Special Summon มอนสเตอร์จาก Graveyard ฝั่งใดก็ได้ — การ์ดมนตราระดับตำนานที่ถูก Ban/Limit มาตลอดประวัติศาสตร์', 850, 12, 'Super Rare', 'Metal Raiders', 'MRD-EN065', '', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 6:30:02 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'booster_pack', ad90bbe1-e9bf-49a6-b510-81ae75727b37, 'Phantom Nightmare Booster Pack', 'บูสเตอร์แพ็ค 9 ใบ รองรับ Fiendsmith และ Snake-Eye set ล่าสุดปี 2024', 180, 200, 'Mixed', 'Phantom Nightmare', 'PHNI-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (ad90bbe1-e9bf-49a6-b510-81ae75727b37, 'yugioh', 'booster_pack', 'Phantom Nightmare Booster Pack', 'บูสเตอร์แพ็ค 9 ใบ รองรับ Fiendsmith และ Snake-Eye set ล่าสุดปี 2024', 180, 200, 'Mixed', 'Phantom Nightmare', 'PHNI-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 6:30:02 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'extra_deck', 9aa2285a-31ea-45b9-8619-937ac5e92cd8, 'Stardust Dragon', 'Level 8 Synchro — Negate ทำลายการ์ดบนสนาม การ์ดซิกเนเจอร์ของ Yusei Fudo จาก Yu-Gi-Oh! 5Ds', 1200, 8, 'Ultra Rare', 'The Duelist Genesis', 'TDGS-EN040', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (9aa2285a-31ea-45b9-8619-937ac5e92cd8, 'yugioh', 'extra_deck', 'Stardust Dragon', 'Level 8 Synchro — Negate ทำลายการ์ดบนสนาม การ์ดซิกเนเจอร์ของ Yusei Fudo จาก Yu-Gi-Oh! 5Ds', 1200, 8, 'Ultra Rare', 'The Duelist Genesis', 'TDGS-EN040', '', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 6:30:02 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'structure_deck', 238b06ad-5721-4bf9-9fbf-9cc370f251ec, 'Structure Deck: Dragon''s Roar', 'เด็ค 40 ใบพร้อมเล่น ธีมดราก้อน มีการ์ด Exclusive ที่หาจากที่อื่นไม่ได้', 490, 30, 'Common', 'Dragon''s Roar Structure Deck', 'SD1-EN', '', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (238b06ad-5721-4bf9-9fbf-9cc370f251ec, 'yugioh', 'structure_deck', 'Structure Deck: Dragon''s Roar', 'เด็ค 40 ใบพร้อมเล่น ธีมดราก้อน มีการ์ด Exclusive ที่หาจากที่อื่นไม่ได้', 490, 30, 'Common', 'Dragon''s Roar Structure Deck', 'SD1-EN', '', true, toTimestamp(now()), toTimestamp(now()));
