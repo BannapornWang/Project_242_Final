@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const Product = require('../models/Product');
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
@@ -80,12 +82,27 @@ router.put('/:id', requireAuth, async (req, res, next) => {
       description, image_url, is_available, rarity, set_name, card_number 
     } = req.body;
     
+    // Fetch the existing product to check for old image
+    const oldProduct = await Product.getById(req.params.id);
+    
     const updated = await Product.update(req.params.id, { 
       name, category, subcategory, price, stock_quantity, 
       description, image_url, is_available, rarity, set_name, card_number 
     });
     
     if (!updated) return res.status(404).json({ error: 'Not found' });
+    
+    // Delete old image if a new one was uploaded and old one exists
+    if (oldProduct && oldProduct.image_url && oldProduct.image_url !== image_url) {
+      if (oldProduct.image_url.startsWith('/images/')) {
+        const oldImagePath = path.join(__dirname, '../../public', oldProduct.image_url);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+          console.log(`Deleted old image: ${oldImagePath}`);
+        }
+      }
+    }
+    
     res.json({ message: 'Product updated', product: updated });
   } catch (err) { next(err); }
 });
