@@ -87,3 +87,17 @@ VALUES ('yugioh', 'extra_deck', dae0a5b6-dd3b-4a40-8e47-a9f1b1494c01, 'Stardust 
 
 INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
 VALUES (dae0a5b6-dd3b-4a40-8e47-a9f1b1494c01, 'yugioh', 'extra_deck', 'Stardust Dragon', 'Level 8 Synchro — Negate ทำลายการ์ดบนสนาม การ์ดซิกเนเจอร์ของ Yusei Fudo จาก Yu-Gi-Oh! 5Ds', 1200, 8, 'Ultra Rare', 'The Duelist Genesis', 'TDGS-EN040', '/images/yugioh/1778061540520-139345869.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- [ID: 8ef58cf2-be35-4c46-82cc-954aa07df7ad] Added/Updated via UI on 5/6/2026, 10:25:54 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'monster_card', 8ef58cf2-be35-4c46-82cc-954aa07df7ad, 'Black Luster Soldier', 'ข ข ข ข ข แข็งงงงงงงงงงงงง', 300000000, 1, 'Secret Rare', 'Stainless Steel', '--', '/images/yugioh/1778063154271-948395699.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (8ef58cf2-be35-4c46-82cc-954aa07df7ad, 'yugioh', 'monster_card', 'Black Luster Soldier', 'ข ข ข ข ข แข็งงงงงงงงงงงงง', 300000000, 1, 'Secret Rare', 'Stainless Steel', '--', '/images/yugioh/1778063154271-948395699.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- [ID: 10655f5c-a2cf-478b-8311-e068e971d18c] Added/Updated via UI on 5/6/2026, 10:31:45 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'spell_card', 10655f5c-a2cf-478b-8311-e068e971d18c, 'Pot of Greed', 'ใครๆก็รู้จัก', 10, 1000000000, 'Common', 'Legend of Blue Eyes White Dragon', '55144522', '/images/yugioh/1778063490595-354282077.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (10655f5c-a2cf-478b-8311-e068e971d18c, 'yugioh', 'spell_card', 'Pot of Greed', 'ใครๆก็รู้จัก', 10, 1000000000, 'Common', 'Legend of Blue Eyes White Dragon', '55144522', '/images/yugioh/1778063490595-354282077.png', true, toTimestamp(now()), toTimestamp(now()));
