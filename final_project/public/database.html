@@ -475,8 +475,16 @@
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
-                    if (!res.ok) throw new Error('Create failed');
                     const result = await res.json();
+                    if (res.status === 409) {
+                        toast(`⚠️ การ์ดชื่อ "${data.name}" มีอยู่แล้วในซีรีส์นี้ — ไม่ได้เพิ่มซ้ำ`, 'error');
+                        closeModal('modal-form');
+                        document.getElementById('form-category').disabled = false;
+                        btn.disabled = false;
+                        btn.textContent = '💾 บันทึก';
+                        return;
+                    }
+                    if (!res.ok) throw new Error('Create failed');
                     toast(`✅ เพิ่มการ์ดสำเร็จ — ID: ${result.product_id}`, 'success');
                 }
                 closeModal('modal-form');

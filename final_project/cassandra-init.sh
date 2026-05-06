@@ -181,7 +181,7 @@ if [ -d "/cassandra" ]; then
   export CQLSH_HOST="${CASSANDRA_HOST}"
   export CQLSH_PORT="${CASSANDRA_PORT}"
   
-  for f in /cassandra/*.cql; do
+  for f in /cassandra/seed_*.cql; do
     if [ -f "$f" ]; then
       echo "  -> Importing: $(basename "$f")..."
       cqlsh "${CASSANDRA_HOST}" "${CASSANDRA_PORT}" -k "${KEYSPACE}" -f "$f" > /dev/null
