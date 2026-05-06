@@ -44,6 +44,11 @@ cd Project_242_Final/final_project
 คำสั่งนี้จะทำการดาวน์โหลด Image และรัน Container ของฐานข้อมูล Cassandra และตัวเว็บไซต์ Node.js:
 ```bash
 docker-compose up -d
+docker ps
+docker exec -it cassandra-node nodetool status
+docker-compose up -d --build app
+docker restart tcg-app
+npm run seed
 ```
 > ⏳ **หมายเหตุ:** ระบบฐานข้อมูล Cassandra อาจใช้เวลาในการ Boot ขึ้นมาประมาณ 60 วินาที ควรรอให้พร้อมก่อนทำขั้นตอนต่อไป
 
