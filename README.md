@@ -1,119 +1,168 @@
-# DooCard Wiki — ฐานข้อมูลการ์ดเกม
+# 🃏 DooCard Wiki
 
-**DooCard Wiki** เป็นเว็บไซต์ฐานข้อมูลการ์ดเกมสะสมที่ทุกคนสามารถเพิ่ม แก้ไข และลบข้อมูลการ์ดได้เอง เหมือน Wikipedia แต่สำหรับการ์ดเกม โดยใช้สถาปัตยกรรม **Node.js** และฐานข้อมูล **Apache Cassandra** รันบนระบบ **Docker**
+> ฐานข้อมูลการ์ดเกมสะสมแบบ Wiki — เพิ่ม แก้ไข ลบข้อมูลการ์ดได้เอง
+
+| Tech | Stack |
+|------|-------|
+| **Backend** | Node.js 18 + Express |
+| **Database** | Apache Cassandra 4.1 |
+| **Auth** | bcrypt + express-session |
+| **Infra** | Docker & Docker Compose |
+| **Frontend** | Vanilla HTML/CSS/JS |
+
+**หมวดหมู่การ์ดที่รองรับ:** Yu-Gi-Oh! · Vanguard · My Little Pony · Gundam
 
 ---
 
-## 🚀 วิธีติดตั้งโปรเจกต์ตั้งแต่เริ่มต้น (From Scratch) ด้วย Docker และ Cassandra
+## 📁 โครงสร้างโปรเจกต์
 
-การติดตั้งนี้จะใช้ Docker เป็นหลัก ทำให้คุณไม่ต้องติดตั้ง Node.js หรือ Cassandra ลงในเครื่องโดยตรง 
+```
+Project_242_Final/
+└── final_project/          ← โฟลเดอร์หลักของแอป
+    ├── docker-compose.yml  ← ตั้งค่า Container ทั้งหมด
+    ├── Dockerfile
+    ├── cassandra/           ← ไฟล์ Schema & Seed (.cql)
+    ├── src/
+    │   ├── index.js         ← Entry point
+    │   ├── config/          ← ตั้งค่า Cassandra connection
+    │   ├── models/          ← Data models
+    │   ├── routes/          ← API routes (auth, products, orders, upload)
+    │   ├── middleware/      ← Auth middleware
+    │   └── seed/            ← Seed script
+    └── public/              ← หน้าเว็บ (HTML/CSS/Images)
+```
 
-### 📌 ข้อกำหนดเบื้องต้น (Prerequisites)
-- เครื่องคอมพิวเตอร์ของคุณต้องมี **Docker** และ **Docker Compose** ติดตั้งอยู่แล้ว (เช่น การติดตั้ง Docker Desktop)
-- มีโปรแกรม **Git** สำหรับโคลนโปรเจกต์
+---
 
-### 🛠️ ขั้นตอนการติดตั้งและรันโปรเจกต์
+## 🏗️ สถาปัตยกรรมระบบ
 
-**1. โคลนโปรเจกต์และเข้าไปยังโฟลเดอร์ทำงาน**
-เปิด Terminal หรือ Command Prompt แล้วรันคำสั่ง:
+```
+Browser ──► Node.js (Port 3000) ──► Cassandra (Port 9042)
+               │                         │
+            tcg-app                 cassandra-node
+               └─────── tcg-network ─────┘
+                     (Docker Bridge)
+```
+
+---
+
+## 🚀 เริ่มต้นใช้งาน
+
+### สิ่งที่ต้องมี
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (รวม Docker Compose แล้ว)
+- [Git](https://git-scm.com/)
+
+### ขั้นตอนที่ 1 — Clone โปรเจกต์
+
 ```bash
 git clone https://github.com/BannapornWang/Project_242_Final.git
 cd Project_242_Final/final_project
 ```
-> **สำคัญ:** โปรเจกต์หลักและไฟล์ตั้งค่า Docker ทั้งหมดจะอยู่ในโฟลเดอร์ `final_project`
 
-**2. การติดตั้งไฟล์ที่ถูกละเว้นโดย `.gitignore`**
-เนื่องจากโปรเจกต์นี้มีการตั้งค่า `.gitignore` เพื่อละเว้นไฟล์บางประเภทไม่ให้ติดไปกับ Git คุณจึงต้องดำเนินการเพิ่มเติมดังนี้:
-- **`node_modules/` (Dependencies):** ไฟล์ไลบรารีจะไม่ถูกพ่วงมาด้วย ให้ทำการดาวน์โหลดด้วยคำสั่ง:
-  ```bash
-  npm install
-  ```
-  *(แม้จะรันด้วย Docker เป็นหลัก แต่การติดตั้ง Local Dependencies จะช่วยให้ IDE เช่น VSCode รู้จักโค้ดและไม่แจ้ง Error)*
-- **`.env` (Environment Variables):** หากต้องการพัฒนานอก Docker หรือใช้ค่าคอนฟิกเฉพาะตัว ให้สร้างไฟล์ `.env` ในโฟลเดอร์ `final_project` และใส่ตัวแปรตั้งต้นดังนี้:
-  ```env
-  NODE_ENV=development
-  PORT=3000
-  CASSANDRA_HOST=127.0.0.1
-  CASSANDRA_PORT=9042
-  CASSANDRA_KEYSPACE=trading_card_shop
-  CASSANDRA_DC=datacenter1
-  ```
-  *(หมายเหตุ: หากคุณรันโปรเจกต์ด้วย Docker ตัว Docker Compose จะจัดการตัวแปรเหล่านี้ให้โดยอัตโนมัติ)*
+### ขั้นตอนที่ 2 — สร้างและรัน Container
 
-**3. เริ่มต้นการทำงานของระบบผ่าน Docker Compose**
-คำสั่งนี้จะทำการดาวน์โหลด Image และรัน Container ของฐานข้อมูล Cassandra และตัวเว็บไซต์ Node.js:
 ```bash
-docker-compose up -d
-docker ps
-docker exec -it cassandra-node nodetool status
-docker-compose up -d --build app
-docker restart tcg-app
-npm run seed
+docker-compose up -d --build
 ```
-> ⏳ **หมายเหตุ:** ระบบฐานข้อมูล Cassandra อาจใช้เวลาในการ Boot ขึ้นมาประมาณ 60 วินาที ควรรอให้พร้อมก่อนทำขั้นตอนต่อไป
 
-**4. สร้างโครงสร้างฐานข้อมูล (Keyspace & Tables)**
-รันสคริปต์ตั้งค่าฐานข้อมูลที่เตรียมไว้ ซึ่งจะเข้าไปทำงานภายใน Container ของ Cassandra ทันที:
+> [!NOTE]
+> Cassandra ใช้เวลาบูตประมาณ **60 วินาที** — Docker จะรอให้พร้อมก่อนเริ่ม Node.js อัตโนมัติ (ผ่าน healthcheck)
+
+ตรวจสอบว่า Container ทำงานปกติ:
+
 ```bash
+docker ps
+```
+
+### ขั้นตอนที่ 3 — สร้างฐานข้อมูล & โหลดข้อมูลเริ่มต้น
+
+```bash
+# สร้าง Keyspace, Tables และโหลด Seed Data
 docker exec -it cassandra-node bash /cassandra-init.sh
 ```
-*(คุณควรจะเห็นข้อความยืนยันว่า Keyspace 'trading_card_shop' สร้างสำเร็จและโหลดข้อมูลเริ่มต้น)*
 
-**5. นำเข้าข้อมูลการ์ดเพิ่มเติม (Seed Data)**
-เติมข้อมูลตัวอย่างลงในฐานข้อมูล โดยสั่งให้แอปพลิเคชันฝั่ง Node.js รันคำสั่ง Seed:
+### ขั้นตอนที่ 4 — นำเข้าข้อมูลเพิ่มเติม (ถ้าต้องการ)
+
 ```bash
 docker exec -it tcg-app npm run seed
 ```
 
-**6. เข้าใช้งานเว็บไซต์**
-เมื่อเสร็จสิ้นขั้นตอนทั้งหมด คุณสามารถเปิดเบราว์เซอร์และเข้าไปที่:
-👉 **[http://localhost:3000](http://localhost:3000)**
+### ขั้นตอนที่ 5 — เปิดใช้งาน 🎉
+
+เข้าเบราว์เซอร์ที่ → **http://localhost:3000**
 
 ---
 
-## 🤝 การทำงานร่วมกับทีม (Team Collaboration & Sync)
+## 🤝 การทำงานร่วมกันในทีม
 
-เมื่อคุณหรือเพื่อนร่วมทีมมีการเพิ่มข้อมูลการ์ดใหม่ผ่านหน้าเว็บ ระบบจะทำการบันทึกคำสั่ง SQL ลงในไฟล์ในโฟลเดอร์ `final_project/cassandra/` โดยอัตโนมัติ เพื่อให้คนในทีมสามารถรับข้อมูลล่าสุดไปใช้งานได้ ให้ทำตามขั้นตอนนี้:
+เมื่อเพิ่ม/แก้ไขการ์ดผ่านหน้าเว็บ ระบบจะบันทึกคำสั่ง CQL ลงในโฟลเดอร์ `cassandra/` อัตโนมัติ
 
-### สำหรับคนที่ "อัปเดต" ข้อมูล (Sender):
-1. เพิ่ม/แก้ไขข้อมูลผ่านหน้าเว็บไซต์ตามปกติ
-2. ตรวจสอบว่าไฟล์ใน `final_project/cassandra/*.cql` มีการเปลี่ยนแปลง
-3. 
-```bash
-Get-Content cassandra\seed_yugioh.cql | docker exec -i cassandra-node cqlsh -u cassandra -p cassandra
-```
-4. **Commit** และ **Push** ไฟล์เหล่านั้นขึ้น GitHub
+### คนที่เพิ่มข้อมูล (Sender)
 
-### สำหรับคนที่จะ "รับ" ข้อมูล (Receiver):
-1. **Git Pull** เพื่อรับไฟล์ล่าสุดจาก GitHub
-2. รันคำสั่งเดิมเพื่ออัปเดตฐานข้อมูลในเครื่องตัวเอง:
-```bash
-docker exec -it cassandra-node bash /cassandra-init.sh
-```
-*(สคริปต์จะทำการกวาดไฟล์ `.cql` ทั้งหมดในโฟลเดอร์มาอัปเดตให้โดยอัตโนมัติ)*
+1. เพิ่ม/แก้ไขการ์ดผ่านหน้าเว็บตามปกติ
+2. ตรวจสอบไฟล์ `cassandra/*.cql` ว่ามีการเปลี่ยนแปลง
+3. Commit & Push ขึ้น GitHub
+
+### คนที่รับข้อมูล (Receiver)
+
+1. `git pull` เพื่อรับไฟล์ล่าสุด
+2. รันคำสั่งอัปเดตฐานข้อมูล:
+   ```bash
+   docker exec -it cassandra-node bash /cassandra-init.sh
+   ```
 
 ---
 
-## 🛑 การจัดการระบบ (Commands)
+## 🛠️ คำสั่งจัดการระบบ
 
-**หยุดการทำงานของระบบชั่วคราว:**
-```bash
-docker-compose stop
-```
-
-**ปิดระบบและลบ Container ทิ้ง (แต่ข้อมูลยังอยู่):**
-```bash
-docker-compose down
-```
-
-**ปิดระบบและล้างข้อมูลฐานข้อมูลทั้งหมด (Reset Data):**
-```bash
-docker-compose down -v
-```
+| คำสั่ง | ผลลัพธ์ |
+|--------|---------|
+| `docker-compose stop` | หยุดระบบชั่วคราว (เก็บ Container ไว้) |
+| `docker-compose start` | เริ่มระบบใหม่จากที่หยุดไว้ |
+| `docker-compose down` | ลบ Container แต่**เก็บข้อมูล**ไว้ |
+| `docker-compose down -v` | ลบทุกอย่าง รวมถึง**ข้อมูลในฐานข้อมูล** |
+| `docker-compose up -d --build` | Build ใหม่และรันทุก Container |
 
 ---
 
-## 📂 โครงสร้างการทำงานที่ควรรู้
-- เบราว์เซอร์ผู้ใช้จะเชื่อมต่อไปยังแอปพลิเคชัน **Node.js** (Port 3000)
-- Node.js จะเชื่อมต่อไปยังฐานข้อมูล **Cassandra** (Port 9042) ผ่านเครือข่ายภายในของ Docker (`tcg-network`)
-- ไฟล์ตั้งค่าทั้งหมดอยู่ที่ `final_project/docker-compose.yml`
+## 💻 สำหรับนักพัฒนา (ไม่ใช้ Docker)
+
+หากต้องการรันบนเครื่องโดยตรง:
+
+```bash
+cd final_project
+npm install
+```
+
+สร้างไฟล์ `.env` ในโฟลเดอร์ `final_project/`:
+
+```env
+NODE_ENV=development
+PORT=3000
+CASSANDRA_HOST=127.0.0.1
+CASSANDRA_PORT=9042
+CASSANDRA_KEYSPACE=trading_card_shop
+CASSANDRA_DC=datacenter1
+```
+
+```bash
+npm run dev    # รันด้วย nodemon (auto-reload)
+```
+
+> [!IMPORTANT]
+> ต้องมี Cassandra รันอยู่ที่ `127.0.0.1:9042` ก่อนจึงจะเชื่อมต่อได้
+
+---
+
+## 📌 API Endpoints
+
+| Method | Path | คำอธิบาย | Auth |
+|--------|------|----------|------|
+| `POST` | `/api/auth/register` | สมัครสมาชิก | ❌ |
+| `POST` | `/api/auth/login` | เข้าสู่ระบบ | ❌ |
+| `GET` | `/api/products` | ดูการ์ดทั้งหมด | ❌ |
+| `POST` | `/api/products` | เพิ่มการ์ดใหม่ | ✅ |
+| `PUT` | `/api/products/:id` | แก้ไขการ์ด | ✅ |
+| `DELETE` | `/api/products/:id` | ลบการ์ด | ✅ |
+| `POST` | `/api/upload` | อัปโหลดรูปการ์ด | ✅ |

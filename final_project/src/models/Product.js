@@ -2,10 +2,30 @@ const client = require('../config/cassandra');
 const cassandra = require('cassandra-driver');
 
 class Product {
-  // CREATE — Batch INSERT into both denormalized tables
-  static async create(data) {
+  // CHECK DUPLICATE — ตรวจสอบว่ามีการ์ดชื่อเดียวกันใน category เดียวกันหรือไม่
+  static async checkDuplicate(name, category) {
+    const query = 'SELECT product_id, name, category FROM products_by_id LIMIT 1000';
+    const result = await client.execute(query, [], { prepare: true });
+    const lowerName = name.toLowerCase().trim();
+    return result.rows.find(row =>
+      row.name && row.name.toLowerCase().trim() === lowerName &&
+      row.category === category
+    ) || null;
+  }
+
+  // CREATE — Batch INSERT into both denormalized tables (with duplicate check)
+  static async create(data, { skipDuplicateCheck = false } = {}) {
+    // ตรวจสอบข้อมูลซ้ำก่อน insert
+    if (!skipDuplicateCheck) {
+      const existing = await this.checkDuplicate(data.name, data.category);
+      if (existing) {
+        console.log(`[DUPLICATE DETECTED] "${data.name}" already exists in category "${data.category}" with ID: ${existing.product_id}`);
+        return { id: existing.product_id.toString(), duplicate: true };
+      }
+    }
+
     const id = cassandra.types.Uuid.random();
-    
+
     const query1 = `
       INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))
@@ -29,24 +49,25 @@ class Product {
     console.log(`\n[CQL EXECUTE] CREATE PRODUCT`);
     console.log(`Query 1: ${query1.trim()}`);
     console.log(`Query 2: ${query2.trim()}`);
-    
+
     const queries = [
       { query: query1, params: params1 },
       { query: query2, params: params2 }
     ];
     await client.batch(queries, { prepare: true });
-    
+
     // Append to .cql seed file for reference
     await this.appendToSeedFile(data, id.toString());
 
-    return id.toString();
+    return { id: id.toString(), duplicate: false };
   }
 
-  // Helper to append new products to .cql files for user reference
+  // Helper to write products to .cql files for user reference
+  // Uses smart upsert: removes existing entry with same product_id before adding
   static async appendToSeedFile(data, id) {
     const fs = require('fs');
     const path = require('path');
-    
+
     const seedFiles = {
       'yugioh': 'seed_yugioh.cql',
       'vanguard': 'seed_vanguard.cql',
@@ -59,7 +80,7 @@ class Product {
 
     // Path inside the container (mounted via docker-compose)
     const filePath = path.join(__dirname, '..', '..', 'cassandra', fileName);
-    
+
     const escape = (val) => {
       if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
       if (val === undefined || val === null) return 'null';
@@ -73,8 +94,8 @@ class Product {
     const cardNum = data.card_number || '';
     const img = data.image_url || '';
 
-    const cql = `
--- Added via UI on ${new Date().toLocaleString()}
+    const newEntry = `
+-- [ID: ${id}] Added/Updated via UI on ${new Date().toLocaleString()}
 INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
 VALUES (${escape(data.category)}, ${escape(sub)}, ${id}, ${escape(data.name)}, ${escape(desc)}, ${data.price}, ${data.stock_quantity}, ${escape(rarity)}, ${escape(setName)}, ${escape(cardNum)}, ${escape(img)}, true, toTimestamp(now()), toTimestamp(now()));
 
@@ -83,10 +104,24 @@ VALUES (${id}, ${escape(data.category)}, ${escape(sub)}, ${escape(data.name)}, $
 `;
 
     try {
-      // Ensure the directory exists (though it should be mounted)
       if (fs.existsSync(filePath)) {
-        fs.appendFileSync(filePath, cql);
-        console.log(`[SEED UPDATE] Appended new product to ${fileName}`);
+        // อ่านไฟล์เดิม แล้วลบ entry ที่มี product_id เดียวกันออกก่อน
+        let content = fs.readFileSync(filePath, 'utf8');
+
+        // ลบ block เดิมที่มี UUID นี้ (comment + 2 INSERT statements)
+        // Pattern: จับตั้งแต่ comment ที่มี ID จนถึงจบ INSERT ตัวที่สอง
+        const idEscaped = id.replace(/[-]/g, '[-]');
+        const pattern = new RegExp(
+          `\n?-- \\[ID: ${idEscaped}\\][^\n]*\n` +
+          `INSERT INTO products[^;]*;\s*\n?` +
+          `\n?INSERT INTO products_by_id[^;]*;\s*\n?`,
+          'g'
+        );
+        content = content.replace(pattern, '');
+
+        // เขียนไฟล์ใหม่ (เนื้อหาเดิมที่ลบ entry ซ้ำแล้ว + entry ใหม่)
+        fs.writeFileSync(filePath, content.trimEnd() + '\n' + newEntry);
+        console.log(`[SEED UPDATE] Upserted product ${id} in ${fileName}`);
       }
     } catch (err) {
       console.error(`[SEED UPDATE ERROR] Could not write to ${fileName}:`, err.message);
@@ -186,13 +221,12 @@ VALUES (${id}, ${escape(data.category)}, ${escape(sub)}, ${escape(data.name)}, $
       const params2 = [name, price, stock, desc, imageUrl, avail, rarity, setName, cardNum, category, subcategory, id];
       await client.execute(query2, params2, { prepare: true });
     }
-    
+
     const updatedProduct = await this.getById(id);
-    
-    // Append to .cql seed file. Since Cassandra INSERT acts as an upsert,
-    // appending an INSERT block here handles both new and existing cards perfectly.
+
+    // Update the .cql seed file with the new data (smart upsert — replaces old entry)
     await this.appendToSeedFile(updatedProduct, id.toString());
-    
+
     return updatedProduct;
   }
 
@@ -203,7 +237,7 @@ VALUES (${id}, ${escape(data.category)}, ${escape(sub)}, ${escape(data.name)}, $
 
     const query1 = `UPDATE products_by_id SET is_available = false WHERE product_id = ? IF EXISTS`;
     const query2 = `UPDATE products SET is_available = false WHERE category = ? AND subcategory = ? AND product_id = ? IF EXISTS`;
-    
+
     console.log(`\n[CQL EXECUTE] SOFT DELETE PRODUCT`);
     console.log(`Query 1: ${query1}`);
     console.log(`Query 2: ${query2}`);
@@ -221,7 +255,7 @@ VALUES (${id}, ${escape(data.category)}, ${escape(sub)}, ${escape(data.name)}, $
 
     const query1 = `DELETE FROM products_by_id WHERE product_id = ?`;
     const query2 = `DELETE FROM products WHERE category = ? AND subcategory = ? AND product_id = ?`;
-    
+
     console.log(`\n[CQL EXECUTE] HARD DELETE PRODUCT`);
     console.log(`Query 1: ${query1}`);
     console.log(`Query 2: ${query2}`);
@@ -239,7 +273,7 @@ VALUES (${id}, ${escape(data.category)}, ${escape(sub)}, ${escape(data.name)}, $
     const query = 'SELECT category FROM products_by_id';
     console.log(`\n[CQL EXECUTE] GET STATS (Aggregated in JS)`);
     console.log(`Query: ${query}`);
-    
+
     const result = await client.execute(query, [], { prepare: true });
     const counts = {};
     for (const row of result.rows) {

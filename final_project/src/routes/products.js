@@ -10,8 +10,15 @@ router.post('/', requireAuth, async (req, res, next) => {
     if (!category || !name || price === undefined || stock_quantity === undefined) {
       return res.status(400).json({ error: 'Missing required fields: category, name, price, stock_quantity' });
     }
-    const id = await Product.create(req.body);
-    res.status(201).json({ message: 'Product created', product_id: id });
+    const result = await Product.create(req.body);
+    if (result.duplicate) {
+      return res.status(409).json({ 
+        message: 'การ์ดชื่อนี้มีอยู่แล้วในซีรีส์เดียวกัน', 
+        product_id: result.id,
+        duplicate: true 
+      });
+    }
+    res.status(201).json({ message: 'Product created', product_id: result.id });
   } catch (err) { next(err); }
 });
 
