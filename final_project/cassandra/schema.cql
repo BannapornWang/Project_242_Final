@@ -168,33 +168,48 @@ CREATE TABLE IF NOT EXISTS trading_card_shop.order_items (
 
 
 -- =============================================================================
--- MATERIALIZED VIEW: products_by_price
+-- TABLE: products_by_price  (replaces Materialized View)
 -- -----------------------------------------------------------------------------
--- ACCESS PATTERN: "Find products within a price range"
+-- ACCESS PATTERN: "Find products within a price range within a category"
 --   SELECT * FROM products_by_price
 --   WHERE category = 'yugioh' AND price >= 500 AND price <= 2000;
 --
--- Why a Materialized View instead of a Secondary Index?
---   - A 2i on price would scatter the query across all nodes (inefficient).
---   - A MV with (category, price, product_id) as PK keeps all products of
---     the same category + price range co-located → efficient range scans.
+-- NOTE: Cassandra 4.x disables Materialized Views by default (materialized_views_enabled=false).
+--   This denormalized table is the recommended alternative for dev environments.
+--   Populate it alongside products + products_by_id in the seeding layer.
 --
--- Cassandra MV rules satisfied:
---   ✓ All base table primary key columns appear in the MV primary key
---   ✓ Exactly one non-PK base column (price) added to PK
---   ✓ WHERE clause filters NULL prices
+-- Partition key  : category         → all products of same brand in one partition
+-- Clustering keys: price ASC        → enables efficient range scans on price
+--                  subcategory ASC  → secondary sort within same price
+--                  product_id ASC   → tie-breaker (UUID ensures uniqueness)
 -- =============================================================================
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS trading_card_shop.products_by_price AS
-    SELECT *
-    FROM   trading_card_shop.products
-    WHERE  category   IS NOT NULL
-      AND  price       IS NOT NULL
-      AND  subcategory IS NOT NULL
-      AND  product_id  IS NOT NULL
+CREATE TABLE IF NOT EXISTS trading_card_shop.products_by_price (
+
+    -- ── Partition key ─────────────────────────────────────────────────────────
+    category        TEXT,
+
+    -- ── Clustering keys ───────────────────────────────────────────────────────
+    price           DECIMAL,
+    subcategory     TEXT,
+    product_id      UUID,
+
+    -- ── Denormalized product columns ──────────────────────────────────────────
+    name            TEXT,
+    description     TEXT,
+    stock_quantity  INT,
+    rarity          TEXT,
+    set_name        TEXT,
+    card_number     TEXT,
+    image_url       TEXT,
+    is_available    BOOLEAN,
+    created_at      TIMESTAMP,
+    updated_at      TIMESTAMP,
+
     PRIMARY KEY ( category, price, subcategory, product_id )
-    WITH CLUSTERING ORDER BY ( price ASC, subcategory ASC, product_id ASC )
-    AND  comment = 'MV: price-range queries within a category';
+
+) WITH CLUSTERING ORDER BY ( price ASC, subcategory ASC, product_id ASC )
+  AND comment = 'Lookup table: price-range queries within a category (replaces disabled MV)';
 
 
 -- =============================================================================
