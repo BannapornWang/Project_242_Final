@@ -101,3 +101,17 @@ VALUES ('yugioh', 'spell_card', 10655f5c-a2cf-478b-8311-e068e971d18c, 'Pot of Gr
 
 INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
 VALUES (10655f5c-a2cf-478b-8311-e068e971d18c, 'yugioh', 'spell_card', 'Pot of Greed', 'ใครๆก็รู้จัก', 10, 1000000000, 'Common', 'Legend of Blue Eyes White Dragon', '55144522', '/images/yugioh/1778063490595-354282077.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- [ID: 0e0a3bc9-24e5-40f2-aa81-8ba608668323] Added/Updated via UI on 5/6/2026, 2:31:49 PM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'monster_card', 0e0a3bc9-24e5-40f2-aa81-8ba608668323, 'Magi Magi Magician Gal', 'fewfwefweqf', 3000, 3, 'Secret Rare', '--', 'Wjmp-jp018', '/images/yugioh/1778077795227-200378958.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (0e0a3bc9-24e5-40f2-aa81-8ba608668323, 'yugioh', 'monster_card', 'Magi Magi Magician Gal', 'fewfwefweqf', 3000, 3, 'Secret Rare', '--', 'Wjmp-jp018', '/images/yugioh/1778077795227-200378958.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- [ID: 8999e8c3-b83d-4055-81a7-9ae11e1c7c85] Added/Updated via UI on 5/6/2026, 2:35:29 PM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('yugioh', 'monster_card', 8999e8c3-b83d-4055-81a7-9ae11e1c7c85, 'Elemental HERO Neos', 'ร่างหลักของจูไดในภาค GX', 50, 20, 'Rare', 'STRIKE OF NEOS (STON)', 'STON-EN035', '/images/yugioh/1778078129142-361589751.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (8999e8c3-b83d-4055-81a7-9ae11e1c7c85, 'yugioh', 'monster_card', 'Elemental HERO Neos', 'ร่างหลักของจูไดในภาค GX', 50, 20, 'Rare', 'STRIKE OF NEOS (STON)', 'STON-EN035', '/images/yugioh/1778078129142-361589751.png', true, toTimestamp(now()), toTimestamp(now()));
