@@ -12,8 +12,16 @@ const storage = multer.diskStorage({
         const dir = path.join(__dirname, '../../public/images', category);
         
         // Create directory if it doesn't exist
+        console.log(`Attempting to save file to: ${dir}`);
         if (!fs.existsSync(dir)){
-            fs.mkdirSync(dir, { recursive: true });
+            console.log(`Directory ${dir} does not exist, creating it.`);
+            try {
+                fs.mkdirSync(dir, { recursive: true });
+                console.log(`Directory ${dir} created successfully.`);
+            } catch (error) {
+                console.error(`Error creating directory ${dir}:`, error);
+                return cb(error);
+            }
         }
         cb(null, dir);
     },
