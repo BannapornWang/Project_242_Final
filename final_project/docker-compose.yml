@@ -84,4 +84,5 @@ services:
         condition: service_healthy   # Wait until Cassandra health check passes
     volumes:
       - ./src:/app/src:ro            # Mount source for hot-reload in dev override
-      - ./public:/app/public:ro      # Mount frontend files to see changes instantly
+      - ./public:/app/public         # Mount frontend files to see changes instantly (allow image uploads)
+      - ./cassandra:/app/cassandra   # Allow app to append new data to seed files for reference

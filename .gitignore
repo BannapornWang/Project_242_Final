@@ -1,0 +1,27 @@
+# =============================================================================
+# Root .gitignore for Project_242_Final
+# =============================================================================
+
+# Cassandra Local Binaries (Leftovers)
+apache-cassandra-*/
+apache-cassandra-*-bin/
+
+# Dependencies
+**/node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

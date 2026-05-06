@@ -35,7 +35,62 @@ class Product {
       { query: query2, params: params2 }
     ];
     await client.batch(queries, { prepare: true });
+    
+    // Append to .cql seed file for reference
+    await this.appendToSeedFile(data, id.toString());
+
     return id.toString();
+  }
+
+  // Helper to append new products to .cql files for user reference
+  static async appendToSeedFile(data, id) {
+    const fs = require('fs');
+    const path = require('path');
+    
+    const seedFiles = {
+      'yugioh': 'seed_yugioh.cql',
+      'vanguard': 'seed_vanguard.cql',
+      'mlp': 'seed_mlp.cql',
+      'gundam': 'seed_gundam.cql'
+    };
+
+    const fileName = seedFiles[data.category];
+    if (!fileName) return;
+
+    // Path inside the container (mounted via docker-compose)
+    const filePath = path.join(__dirname, '..', '..', 'cassandra', fileName);
+    
+    const escape = (val) => {
+      if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
+      if (val === undefined || val === null) return 'null';
+      return val;
+    };
+
+    const sub = data.subcategory || 'general';
+    const desc = data.description || '';
+    const rarity = data.rarity || 'Common';
+    const setName = data.set_name || '';
+    const cardNum = data.card_number || '';
+    const img = data.image_url || '';
+
+    const cql = `
+-- Added via UI on ${new Date().toLocaleString()}
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (${escape(data.category)}, ${escape(sub)}, ${id}, ${escape(data.name)}, ${escape(desc)}, ${data.price}, ${data.stock_quantity}, ${escape(rarity)}, ${escape(setName)}, ${escape(cardNum)}, ${escape(img)}, true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (${id}, ${escape(data.category)}, ${escape(sub)}, ${escape(data.name)}, ${escape(desc)}, ${data.price}, ${data.stock_quantity}, ${escape(rarity)}, ${escape(setName)}, ${escape(cardNum)}, ${escape(img)}, true, toTimestamp(now()), toTimestamp(now()));
+`;
+
+    try {
+      // Ensure the directory exists (though it should be mounted)
+      if (fs.existsSync(filePath)) {
+        fs.appendFileSync(filePath, cql);
+        console.log(`[SEED UPDATE] Appended new product to ${fileName}`);
+      }
+    } catch (err) {
+      console.error(`[SEED UPDATE ERROR] Could not write to ${fileName}:`, err.message);
+    }
   }
 
   // GET ALL BY CATEGORY (AND OPTIONAL SUBCATEGORY)
@@ -88,35 +143,57 @@ class Product {
     const existing = await this.getById(id);
     if (!existing) return null;
 
+    const name = data.name !== undefined ? data.name : existing.name;
+    const category = data.category !== undefined ? data.category : existing.category;
+    const subcategory = data.subcategory !== undefined ? data.subcategory : existing.subcategory;
     const price = data.price !== undefined ? data.price : existing.price;
     const stock = data.stock_quantity !== undefined ? data.stock_quantity : existing.stock_quantity;
     const desc = data.description !== undefined ? data.description : existing.description;
     const imageUrl = data.image_url !== undefined ? data.image_url : existing.image_url;
     const avail = data.is_available !== undefined ? data.is_available : existing.is_available;
+    const rarity = data.rarity !== undefined ? data.rarity : existing.rarity;
+    const setName = data.set_name !== undefined ? data.set_name : existing.set_name;
+    const cardNum = data.card_number !== undefined ? data.card_number : existing.card_number;
 
     const query1 = `
       UPDATE products_by_id 
-      SET price = ?, stock_quantity = ?, description = ?, image_url = ?, is_available = ?, updated_at = toTimestamp(now())
+      SET name = ?, category = ?, subcategory = ?, price = ?, stock_quantity = ?, description = ?, image_url = ?, is_available = ?, rarity = ?, set_name = ?, card_number = ?, updated_at = toTimestamp(now())
       WHERE product_id = ? IF EXISTS
     `;
-    const params1 = [price, stock, desc, imageUrl, avail, id];
-
-    const query2 = `
-      UPDATE products 
-      SET price = ?, stock_quantity = ?, description = ?, image_url = ?, is_available = ?, updated_at = toTimestamp(now())
-      WHERE category = ? AND subcategory = ? AND product_id = ? IF EXISTS
-    `;
-    const params2 = [price, stock, desc, imageUrl, avail, existing.category, existing.subcategory, id];
-
-    console.log(`\n[CQL EXECUTE] UPDATE PRODUCT (LWT)`);
-    console.log(`Query 1 (products_by_id): ${query1.trim()}`);
-    console.log(`Query 2 (products): ${query2.trim()}`);
-    
-    // Execute LWT queries separately (batching LWT across partitions is unsupported)
+    const params1 = [name, category, subcategory, price, stock, desc, imageUrl, avail, rarity, setName, cardNum, id];
     await client.execute(query1, params1, { prepare: true });
-    await client.execute(query2, params2, { prepare: true });
+
+    const pkChanged = existing.category !== category || existing.subcategory !== subcategory;
+
+    if (pkChanged) {
+      // PK changed in products table: MUST DELETE OLD AND INSERT NEW
+      const delQuery = `DELETE FROM products WHERE category = ? AND subcategory = ? AND product_id = ?`;
+      await client.execute(delQuery, [existing.category, existing.subcategory, id], { prepare: true });
+
+      const insQuery = `
+        INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))
+      `;
+      const insParams = [category, subcategory, id, name, desc, price, stock, rarity, setName, cardNum, imageUrl, avail];
+      await client.execute(insQuery, insParams, { prepare: true });
+    } else {
+      // PK did not change, normal update
+      const query2 = `
+        UPDATE products 
+        SET name = ?, price = ?, stock_quantity = ?, description = ?, image_url = ?, is_available = ?, rarity = ?, set_name = ?, card_number = ?, updated_at = toTimestamp(now())
+        WHERE category = ? AND subcategory = ? AND product_id = ? IF EXISTS
+      `;
+      const params2 = [name, price, stock, desc, imageUrl, avail, rarity, setName, cardNum, category, subcategory, id];
+      await client.execute(query2, params2, { prepare: true });
+    }
     
-    return this.getById(id);
+    const updatedProduct = await this.getById(id);
+    
+    // Append to .cql seed file. Since Cassandra INSERT acts as an upsert,
+    // appending an INSERT block here handles both new and existing cards perfectly.
+    await this.appendToSeedFile(updatedProduct, id.toString());
+    
+    return updatedProduct;
   }
 
   // SOFT DELETE

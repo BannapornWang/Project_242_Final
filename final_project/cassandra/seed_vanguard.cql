@@ -1,0 +1,54 @@
+USE trading_card_shop;
+
+-- =============================================================================
+-- 4. Cardfight!! Vanguard (Featured Cards)
+-- =============================================================================
+BEGIN BATCH
+    INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES ('vanguard', 'grade_3_unit', 44444444-4444-4444-4444-444444444444, 'Blaster Blade', 'Grade 3 Royal Paladin. Power 10000. On Ride: retire one of opponent''s rear-guards.', 750.00, 10, 'Rare', 'Cardfight!! Vanguard V Vol.01', 'V-BT01/006EN', '/images/cards/blaster_blade.png', true, toTimestamp(now()), toTimestamp(now()));
+
+    INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+    VALUES (44444444-4444-4444-4444-444444444444, 'vanguard', 'grade_3_unit', 'Blaster Blade', 'Grade 3 Royal Paladin. Power 10000. On Ride: retire one of opponent''s rear-guards.', 750.00, 10, 'Rare', 'Cardfight!! Vanguard V Vol.01', 'V-BT01/006EN', '/images/cards/blaster_blade.png', true, toTimestamp(now()), toTimestamp(now()));
+APPLY BATCH;
+
+-- Added via UI on 5/6/2026, 3:38:33 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'Normal Unit', 09af1d85-0845-411b-827e-34c343d9bed6, 'Youthberk "Skyfall Arms"', 'เท่แบบหยุดไม่อยู่', 300, 500, 'Ultra Rare', 'RevolDress', 'D-SS12/SIR14EN', '/images/vanguard/1778038713610-669099959.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (09af1d85-0845-411b-827e-34c343d9bed6, 'vanguard', 'Normal Unit', 'Youthberk "Skyfall Arms"', 'เท่แบบหยุดไม่อยู่', 300, 500, 'Ultra Rare', 'RevolDress', 'D-SS12/SIR14EN', '/images/vanguard/1778038713610-669099959.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 3:53:24 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'PR', 7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 10000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'vanguard', 'PR', 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 10000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 3:54:02 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'PR', 7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 5000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'vanguard', 'PR', 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 5000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 3:58:03 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'Normal Unit', 7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 5000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'vanguard', 'Normal Unit', 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 5000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 3:58:07 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'Normal Unit', 7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 5000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (7c9e9b96-dbe4-49c3-8c2a-075dd5a73813, 'vanguard', 'Normal Unit', 'Blaster Blade Liberity', 'Super Rare Blaster Blade', 2000, 5000, 'Secret Rare', 'PR', 'PR/0779', '/images/vanguard/1778036055201-306662524.png', true, toTimestamp(now()), toTimestamp(now()));
+
+-- Added via UI on 5/6/2026, 3:58:17 AM
+INSERT INTO products (category, subcategory, product_id, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES ('vanguard', 'Normal Unit', 09af1d85-0845-411b-827e-34c343d9bed6, 'Youthberk "Skyfall Arms"', 'เท่แบบหยุดไม่อยู่', 300, 600, 'Ultra Rare', 'RevolDress', 'D-SS12/SIR14EN', '/images/vanguard/1778038713610-669099959.png', true, toTimestamp(now()), toTimestamp(now()));
+
+INSERT INTO products_by_id (product_id, category, subcategory, name, description, price, stock_quantity, rarity, set_name, card_number, image_url, is_available, created_at, updated_at)
+VALUES (09af1d85-0845-411b-827e-34c343d9bed6, 'vanguard', 'Normal Unit', 'Youthberk "Skyfall Arms"', 'เท่แบบหยุดไม่อยู่', 300, 600, 'Ultra Rare', 'RevolDress', 'D-SS12/SIR14EN', '/images/vanguard/1778038713610-669099959.png', true, toTimestamp(now()), toTimestamp(now()));

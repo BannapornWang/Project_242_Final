@@ -2,25 +2,25 @@
    Design System & Tokens — Card Database Wiki
    ========================================= */
 :root {
-    /* Colors — Deep Navy + Cyan Accent */
-    --bg-dark: #080b14;
-    --bg-surface: #0d1117;
-    --bg-card: rgba(13, 17, 23, 0.8);
-    --bg-card-hover: rgba(22, 27, 34, 0.95);
-    --bg-modal: rgba(13, 17, 23, 0.97);
-    --bg-input: rgba(22, 27, 34, 0.7);
-    --text-primary: #e6edf3;
-    --text-secondary: #8b949e;
-    --text-muted: #484f58;
+    /* Colors — Deep Black + Orange Accent */
+    --bg-dark: #050505;
+    --bg-surface: #121212;
+    --bg-card: rgba(18, 18, 18, 0.8);
+    --bg-card-hover: rgba(30, 30, 30, 0.95);
+    --bg-modal: rgba(18, 18, 18, 0.97);
+    --bg-input: rgba(30, 30, 30, 0.7);
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
     
-    /* Accents — Cyan/Teal */
-    --accent-primary: #58a6ff;
-    --accent-secondary: #3fb950;
-    --accent-warning: #d29922;
-    --accent-danger: #f85149;
-    --accent-info: #79c0ff;
-    --accent-glow: rgba(88, 166, 255, 0.3);
-    --accent-gradient: linear-gradient(135deg, #58a6ff, #3fb950);
+    /* Accents — Orange/Amber */
+    --accent-primary: #f97316;
+    --accent-secondary: #fbbf24;
+    --accent-warning: #f59e0b;
+    --accent-danger: #ef4444;
+    --accent-info: #fb923c;
+    --accent-glow: rgba(249, 115, 22, 0.3);
+    --accent-gradient: linear-gradient(135deg, #ea580c, #fbbf24);
     
     /* Game Specific Colors */
     --color-yugioh: #fbbf24;

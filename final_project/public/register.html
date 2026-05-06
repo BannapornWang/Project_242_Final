@@ -1,70 +1,193 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DooCard Wiki | สมัครสมาชิก</title>
     <meta name="description" content="สมัครสมาชิกเพื่อร่วมเป็นส่วนหนึ่งของฐานข้อมูลการ์ดเกมสะสม">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        body { display: flex; flex-direction: column; min-height: 100vh; }
-        .auth-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: calc(var(--nav-height) + 2rem) 1.5rem 2rem; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: calc(var(--nav-height) + 2rem) 1.5rem 2rem;
+        }
+
         .auth-card {
-            width: 100%; max-width: 440px;
-            background: var(--bg-surface); border: var(--border-subtle);
-            border-radius: var(--border-radius-lg); padding: 2.5rem;
-            box-shadow: var(--shadow-lg); animation: fadeInUp 0.4s ease;
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-surface);
+            border: var(--border-subtle);
+            border-radius: var(--border-radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.4s ease;
         }
-        .auth-card h1 { font-size: 1.6rem; font-weight: 700; text-align: center; margin-bottom: 0.3rem; }
-        .auth-card .subtitle { text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
-        .auth-form { display: flex; flex-direction: column; gap: 1.1rem; }
-        .auth-form .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
-        .auth-form label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+
+        .auth-card h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .auth-card .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .auth-form .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .auth-form label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
         .auth-form input {
-            padding: 0.75rem 1rem; background: var(--bg-input);
-            border: 1px solid rgba(48, 54, 61, 0.6); border-radius: var(--border-radius-xs);
-            color: var(--text-primary); font-family: var(--font-body); font-size: 0.95rem;
-            transition: var(--transition-fast); outline: none;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid rgba(48, 54, 61, 0.6);
+            border-radius: var(--border-radius-xs);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: var(--transition-fast);
+            outline: none;
         }
-        .auth-form input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.12); }
+
+        .auth-form input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.12);
+        }
+
         .auth-form .submit-btn {
-            padding: 0.8rem; background: var(--accent-secondary); color: #fff;
-            border: none; border-radius: var(--border-radius-sm); font-family: var(--font-heading);
-            font-weight: 600; font-size: 1rem; cursor: pointer; transition: var(--transition-fast);
+            padding: 0.8rem;
+            background: var(--accent-secondary);
+            color: #fff;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
             margin-top: 0.5rem;
         }
-        .auth-form .submit-btn:hover { background: #37a34c; transform: translateY(-1px); }
-        .auth-form .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .auth-error { color: var(--accent-danger); font-size: 0.85rem; text-align: center; min-height: 1.2rem; }
-        .auth-success { color: var(--accent-secondary); font-size: 0.85rem; text-align: center; }
-        .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); }
-        .auth-footer a { color: var(--accent-primary); font-weight: 600; transition: var(--transition-fast); }
-        .auth-footer a:hover { text-decoration: underline; }
-        .auth-icon { text-align: center; font-size: 3rem; margin-bottom: 1rem; }
+
+        .auth-form .submit-btn:hover {
+            background: #37a34c;
+            transform: translateY(-1px);
+        }
+
+        .auth-form .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-error {
+            color: var(--accent-danger);
+            font-size: 0.85rem;
+            text-align: center;
+            min-height: 1.2rem;
+        }
+
+        .auth-success {
+            color: var(--accent-secondary);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--accent-primary);
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-icon {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
         .auth-glow {
-            position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
-            width: 600px; height: 400px; pointer-events: none; z-index: 0;
-            background: radial-gradient(circle, rgba(63,185,80,0.06) 0%, rgba(8,11,20,0) 70%);
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(63, 185, 80, 0.06) 0%, rgba(8, 11, 20, 0) 70%);
         }
+
         .cql-hint {
-            margin-top: 1.5rem; padding: 0.75rem 1rem;
-            background: rgba(22, 27, 34, 0.6); border: 1px solid rgba(48, 54, 61, 0.4);
-            border-radius: var(--border-radius-xs); font-size: 0.78rem; color: var(--text-muted);
+            margin-top: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(22, 27, 34, 0.6);
+            border: 1px solid rgba(48, 54, 61, 0.4);
+            border-radius: var(--border-radius-xs);
+            font-size: 0.78rem;
+            color: var(--text-muted);
         }
-        .cql-hint code { color: var(--accent-info); font-family: 'JetBrains Mono', monospace; }
+
+        .cql-hint code {
+            color: var(--accent-info);
+            font-family: 'JetBrains Mono', monospace;
+        }
     </style>
 </head>
+
 <body>
-    <nav class="navbar"><div class="nav-container">
-        <a href="index.html" class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</a>
-        <ul class="nav-links">
-            <li><a href="index.html">หน้าหลัก</a></li>
-            <li><a href="database.html">ฐานข้อมูลการ์ด</a></li>
-            <li><a href="register.html" class="active">สมัครสมาชิก</a></li>
-        </ul>
-        <div class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></div>
-    </div></nav>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><span class="logo-accent">Doo</span>Card Wiki</a>
+            <ul class="nav-links">
+                <li><a href="index.html">หน้าหลัก</a></li>
+                <li><a href="database.html">ฐานข้อมูลการ์ด</a></li>
+                <li><a href="register.html" class="active">สมัครสมาชิก</a></li>
+            </ul>
+            <div class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+                <span></span><span></span><span></span></div>
+        </div>
+    </nav>
 
     <div class="auth-glow"></div>
 
@@ -77,7 +200,8 @@
             <form class="auth-form" id="register-form" onsubmit="return false;">
                 <div class="form-group">
                     <label for="username">ชื่อผู้ใช้ (Username) *</label>
-                    <input type="text" id="username" placeholder="ตั้งชื่อผู้ใช้ อย่างน้อย 3 ตัวอักษร" autocomplete="username" required minlength="3">
+                    <input type="text" id="username" placeholder="ตั้งชื่อผู้ใช้ อย่างน้อย 3 ตัวอักษร"
+                        autocomplete="username" required minlength="3">
                 </div>
                 <div class="form-group">
                     <label for="email">อีเมล (Email) *</label>
@@ -85,18 +209,21 @@
                 </div>
                 <div class="form-group">
                     <label for="password">รหัสผ่าน (Password) *</label>
-                    <input type="password" id="password" placeholder="อย่างน้อย 4 ตัวอักษร" autocomplete="new-password" required minlength="4">
+                    <input type="password" id="password" placeholder="อย่างน้อย 4 ตัวอักษร" autocomplete="new-password"
+                        required minlength="4">
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">ยืนยันรหัสผ่าน *</label>
-                    <input type="password" id="confirm-password" placeholder="กรอกรหัสผ่านอีกครั้ง" autocomplete="new-password" required>
+                    <input type="password" id="confirm-password" placeholder="กรอกรหัสผ่านอีกครั้ง"
+                        autocomplete="new-password" required>
                 </div>
                 <div class="auth-error" id="error-msg"></div>
                 <button type="submit" class="submit-btn" id="submit-btn">🎉 สมัครสมาชิก</button>
             </form>
 
             <div class="cql-hint">
-                📋 <strong>CQL ที่ใช้:</strong> <code>INSERT INTO users (user_id, username, email, password_hash, ...) VALUES (...)</code>
+                📋 <strong>CQL ที่ใช้:</strong>
+                <code>INSERT INTO users (user_id, username, email, password_hash, ...) VALUES (...)</code>
             </div>
 
             <div class="auth-footer">
@@ -105,10 +232,12 @@
         </div>
     </div>
 
-    <footer><div class="footer-content">
-        <div class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</div>
-        <p>&copy; 2026 DooCard Wiki</p>
-    </div></footer>
+    <footer>
+        <div class="footer-content">
+            <div class="logo"><span class="logo-icon">📚</span> <span class="logo-accent">Doo</span>Card Wiki</div>
+            <p>&copy; 2026 DooCard Wiki</p>
+        </div>
+    </footer>
 
     <script>
         // Redirect if already logged in
@@ -148,4 +277,5 @@
         });
     </script>
 </body>
+
 </html>

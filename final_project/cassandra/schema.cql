@@ -212,3 +212,19 @@ CREATE INDEX IF NOT EXISTS idx_products_rarity
 
 CREATE INDEX IF NOT EXISTS idx_products_available
     ON trading_card_shop.products (is_available);
+
+-- =============================================================================
+-- TABLE 5: users
+-- -----------------------------------------------------------------------------
+-- Stores user accounts for authentication
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS trading_card_shop.users (
+    user_id       UUID,
+    username      TEXT,
+    email         TEXT,
+    password_hash TEXT,
+    display_name  TEXT,
+    created_at    TIMESTAMP,
+    PRIMARY KEY (username)
+) WITH comment = 'User accounts for authentication';
