@@ -78,15 +78,19 @@ docker exec -it tcg-app npm run seed
 ### สำหรับคนที่ "อัปเดต" ข้อมูล (Sender):
 1. เพิ่ม/แก้ไขข้อมูลผ่านหน้าเว็บไซต์ตามปกติ
 2. ตรวจสอบว่าไฟล์ใน `final_project/cassandra/*.cql` มีการเปลี่ยนแปลง
-3. **Commit** และ **Push** ไฟล์เหล่านั้นขึ้น GitHub
+3. 
+```bash
+Get-Content cassandra\seed_yugioh.cql | docker exec -i cassandra-node cqlsh -u cassandra -p cassandra
+```
+4. **Commit** และ **Push** ไฟล์เหล่านั้นขึ้น GitHub
 
 ### สำหรับคนที่จะ "รับ" ข้อมูล (Receiver):
 1. **Git Pull** เพื่อรับไฟล์ล่าสุดจาก GitHub
 2. รันคำสั่งเดิมเพื่ออัปเดตฐานข้อมูลในเครื่องตัวเอง:
-   ```bash
-   docker exec -it cassandra-node bash /cassandra-init.sh
-   ```
-   *(สคริปต์จะทำการกวาดไฟล์ `.cql` ทั้งหมดในโฟลเดอร์มาอัปเดตให้โดยอัตโนมัติ)*
+```bash
+docker exec -it cassandra-node bash /cassandra-init.sh
+```
+*(สคริปต์จะทำการกวาดไฟล์ `.cql` ทั้งหมดในโฟลเดอร์มาอัปเดตให้โดยอัตโนมัติ)*
 
 ---
 
